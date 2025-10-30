@@ -6,7 +6,7 @@ export const signUpSchema = z
       .string()
       .min(3, 'O nome deve ter pelo menos 3 caracteres')
       .max(100, 'O nome deve ter no máximo 100 caracteres'),
-    email: z.string().email('Email inválido'),
+    email: z.email('Email inválido'),
     password: z
       .string()
       .min(8, 'A senha deve ter pelo menos 8 caracteres')
@@ -24,7 +24,7 @@ export const signUpSchema = z
 export type SignUpFormData = z.infer<typeof signUpSchema>
 
 export const signInSchema = z.object({
-  email: z.string().email('Email inválido'),
+  email: z.email('Email inválido'),
   password: z.string().min(1, 'A senha é obrigatória'),
 })
 

@@ -142,7 +142,7 @@ export function SignUpForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button type="submit" className="w-full mt-8 cursor-pointer" disabled={isLoading}>
             {isLoading ? 'Criando conta...' : 'Criar conta'}
           </Button>
           <p className="text-center text-sm text-muted-foreground">

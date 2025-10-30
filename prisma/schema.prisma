@@ -1,0 +1,154 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  items        LearningItem[]
+  accounts     Account[]
+  sessions     Session[]
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Category model
+model Category {
+  id    String         @id @default(cuid())
+  name  String         @unique
+  color String
+  items LearningItem[]
+}
+
+// LearningItem model
+model LearningItem {
+  id             String            @id @default(cuid())
+  title          String
+  descriptionMD  String            @db.Text
+  dueDate        DateTime?
+  status         Status            @default(Backlog)
+  progressCached Int               @default(0)
+  userId         String
+  categoryId     String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category       Category?         @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  modules        Module[]
+  sourceDeps     Dependency[]      @relation("source")
+  targetDeps     Dependency[]      @relation("target")
+  tags           LearningItemTag[]
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([status])
+}
+
+// Status enum
+enum Status {
+  Backlog
+  Em_Andamento
+  Pausado
+  Concluido
+}
+
+// ModuleStatus enum
+enum ModuleStatus {
+  Pendente
+  Em_Andamento
+  Concluido
+}
+
+// Module model
+model Module {
+  id             String       @id @default(cuid())
+  learningItemId String
+  title          String
+  status         ModuleStatus @default(Pendente)
+  order          Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  learningItem   LearningItem @relation(fields: [learningItemId], references: [id], onDelete: Cascade)
+
+  @@index([learningItemId])
+}
+
+// Dependency model (prerequisites)
+model Dependency {
+  id           String       @id @default(cuid())
+  sourceItemId String
+  targetItemId String
+  createdAt    DateTime     @default(now())
+  sourceItem   LearningItem @relation("source", fields: [sourceItemId], references: [id], onDelete: Cascade)
+  targetItem   LearningItem @relation("target", fields: [targetItemId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceItemId, targetItemId])
+  @@index([sourceItemId])
+  @@index([targetItemId])
+}
+
+// Tag model
+model Tag {
+  id    String            @id @default(cuid())
+  name  String            @unique
+  items LearningItemTag[]
+}
+
+// LearningItemTag (many-to-many relationship)
+model LearningItemTag {
+  learningItemId String
+  tagId          String
+  learningItem   LearningItem @relation(fields: [learningItemId], references: [id], onDelete: Cascade)
+  tag            Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([learningItemId, tagId])
+  @@index([learningItemId])
+  @@index([tagId])
+}

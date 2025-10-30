@@ -58,6 +58,7 @@ sabiu-app/
 ## Princípios da Clean Architecture
 
 ### 1. Core (Domínio)
+
 Contém as **regras de negócio** da aplicação. É independente de frameworks e bibliotecas externas.
 
 - **Entities**: Representam os conceitos principais do domínio
@@ -65,6 +66,7 @@ Contém as **regras de negócio** da aplicação. É independente de frameworks 
 - **Interfaces**: Definem contratos que as camadas externas devem implementar
 
 ### 2. Infra (Infraestrutura)
+
 Implementações concretas que interagem com o mundo externo.
 
 - **Repositories**: Acesso ao banco de dados via Prisma
@@ -72,6 +74,7 @@ Implementações concretas que interagem com o mundo externo.
 - **Mappers**: Conversão entre DTOs e entidades de domínio
 
 ### 3. App (Apresentação)
+
 Interface com o usuário através de Next.js.
 
 - Componentes React para UI

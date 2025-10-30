@@ -39,11 +39,13 @@ SABIU (sabiá + sábio) é uma plataforma para você organizar e acompanhar sua 
 ## ✨ Funcionalidades
 
 ### Autenticação
+
 - ✅ Cadastro com email/senha
 - ✅ Login com NextAuth
 - ✅ Reset de senha via email
 
 ### Gestão de Itens
+
 - ✅ CRUD completo de itens de aprendizado
 - ✅ Organização por categorias
 - ✅ Tags para classificação
@@ -52,11 +54,13 @@ SABIU (sabiá + sábio) é uma plataforma para você organizar e acompanhar sua 
 - ✅ Prazos e status (Backlog, Em Andamento, Pausado, Concluído)
 
 ### Visualizações
+
 - ✅ **Lista**: Tabela com filtros e ordenação
 - ✅ **Kanban**: Arrastar e soltar entre colunas
 - ✅ **Fluxograma**: Grafo interativo de dependências
 
 ### Dashboard
+
 - ✅ Total de itens por categoria
 - ✅ Distribuição por status
 - ✅ Progresso médio geral
@@ -67,6 +71,7 @@ SABIU (sabiá + sábio) é uma plataforma para você organizar e acompanhar sua 
 ## 🚀 Stack Tecnológica
 
 ### Frontend
+
 - **Framework**: Next.js 15 (App Router) + React 19
 - **Linguagem**: TypeScript
 - **Estilização**: Tailwind CSS 4 + shadcn/ui
@@ -79,6 +84,7 @@ SABIU (sabiá + sábio) é uma plataforma para você organizar e acompanhar sua 
 - **Ícones**: Material UI Icons
 
 ### Backend
+
 - **Runtime**: Bun
 - **API**: Next.js Route Handlers
 - **Autenticação**: NextAuth.js v4
@@ -88,6 +94,7 @@ SABIU (sabiá + sábio) é uma plataforma para você organizar e acompanhar sua 
 - **Upload**: UploadThing
 
 ### DevEx e Qualidade
+
 - **Lint**: ESLint + eslint-plugin-jsx-a11y
 - **Format**: Prettier
 - **Testes**: Vitest + Testing Library
@@ -278,15 +285,15 @@ bun run db:seed       # Executa seed
 
 ## 🔐 Variáveis de Ambiente
 
-| Variável | Descrição | Obrigatória |
-|----------|-----------|-------------|
-| `DATABASE_URL` | URL de conexão do PostgreSQL | ✅ |
-| `NEXTAUTH_SECRET` | Secret para NextAuth (gerador: `openssl rand -base64 32`) | ✅ |
-| `NEXTAUTH_URL` | URL da aplicação | ✅ |
-| `RESEND_API_KEY` | API Key do Resend | ✅ |
-| `RESEND_FROM_EMAIL` | Email remetente | ✅ |
-| `UPLOADTHING_SECRET` | Secret do UploadThing | ⚠️ |
-| `UPLOADTHING_APP_ID` | App ID do UploadThing | ⚠️ |
+| Variável             | Descrição                                                 | Obrigatória |
+| -------------------- | --------------------------------------------------------- | ----------- |
+| `DATABASE_URL`       | URL de conexão do PostgreSQL                              | ✅          |
+| `NEXTAUTH_SECRET`    | Secret para NextAuth (gerador: `openssl rand -base64 32`) | ✅          |
+| `NEXTAUTH_URL`       | URL da aplicação                                          | ✅          |
+| `RESEND_API_KEY`     | API Key do Resend                                         | ✅          |
+| `RESEND_FROM_EMAIL`  | Email remetente                                           | ✅          |
+| `UPLOADTHING_SECRET` | Secret do UploadThing                                     | ⚠️          |
+| `UPLOADTHING_APP_ID` | App ID do UploadThing                                     | ⚠️          |
 
 ⚠️ = Opcional para desenvolvimento inicial
 

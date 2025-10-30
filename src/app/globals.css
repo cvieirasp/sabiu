@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -45,83 +45,83 @@
 
 :root {
   /* SABIU Brand Colors */
-  --brand: #3B82F6; /* Azul Sabiá */
-  --accent: #F5A524; /* Dourado Canto */
+  --brand: #3b82f6; /* Azul Sabiá */
+  --accent: #f5a524; /* Dourado Canto */
 
   /* Feedback Colors */
-  --success: #10B981;
-  --warning: #F59E0B;
-  --danger: #EF4444;
-  --info: #38BDF8;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #38bdf8;
 
   /* Light Theme */
   --radius: 0.625rem;
-  --background: #F8FAFC;
-  --foreground: #0F172A;
-  --card: #FFFFFF;
-  --card-foreground: #0F172A;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #3B82F6; /* brand */
-  --primary-foreground: #FFFFFF;
-  --secondary: #F5A524; /* accent */
-  --secondary-foreground: #FFFFFF;
-  --muted: #94A3B8;
-  --muted-foreground: #64748B;
-  --accent-bg: #F5A524;
-  --accent-foreground: #0F172A;
-  --destructive: #EF4444;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #3B82F6;
-  --chart-1: #3B82F6;
-  --chart-2: #F5A524;
-  --chart-3: #10B981;
-  --chart-4: #F59E0B;
-  --chart-5: #38BDF8;
-  --sidebar: #FFFFFF;
-  --sidebar-foreground: #0F172A;
-  --sidebar-primary: #3B82F6;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F8FAFC;
-  --sidebar-accent-foreground: #0F172A;
-  --sidebar-border: #E2E8F0;
-  --sidebar-ring: #3B82F6;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #3b82f6; /* brand */
+  --primary-foreground: #ffffff;
+  --secondary: #f5a524; /* accent */
+  --secondary-foreground: #ffffff;
+  --muted: #94a3b8;
+  --muted-foreground: #64748b;
+  --accent-bg: #f5a524;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #3b82f6;
+  --chart-1: #3b82f6;
+  --chart-2: #f5a524;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #38bdf8;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f8fafc;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #3b82f6;
 }
 
 .dark {
   /* Dark Theme */
-  --background: #0B1220;
-  --foreground: #E5E7EB;
-  --card: #1E293B;
-  --card-foreground: #E5E7EB;
-  --popover: #1E293B;
-  --popover-foreground: #E5E7EB;
-  --primary: #3B82F6; /* brand */
-  --primary-foreground: #FFFFFF;
-  --secondary: #F5A524; /* accent */
-  --secondary-foreground: #0F172A;
-  --muted: #94A3B8;
-  --muted-foreground: #64748B;
-  --accent-bg: #F5A524;
-  --accent-foreground: #0F172A;
-  --destructive: #EF4444;
-  --border: #1E293B;
-  --input: #1E293B;
-  --ring: #3B82F6;
-  --chart-1: #3B82F6;
-  --chart-2: #F5A524;
-  --chart-3: #10B981;
-  --chart-4: #F59E0B;
-  --chart-5: #38BDF8;
-  --sidebar: #1E293B;
-  --sidebar-foreground: #E5E7EB;
-  --sidebar-primary: #3B82F6;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #0B1220;
-  --sidebar-accent-foreground: #E5E7EB;
-  --sidebar-border: #1E293B;
-  --sidebar-ring: #3B82F6;
+  --background: #0b1220;
+  --foreground: #e5e7eb;
+  --card: #1e293b;
+  --card-foreground: #e5e7eb;
+  --popover: #1e293b;
+  --popover-foreground: #e5e7eb;
+  --primary: #3b82f6; /* brand */
+  --primary-foreground: #ffffff;
+  --secondary: #f5a524; /* accent */
+  --secondary-foreground: #0f172a;
+  --muted: #94a3b8;
+  --muted-foreground: #64748b;
+  --accent-bg: #f5a524;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #3b82f6;
+  --chart-1: #3b82f6;
+  --chart-2: #f5a524;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #38bdf8;
+  --sidebar: #1e293b;
+  --sidebar-foreground: #e5e7eb;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0b1220;
+  --sidebar-accent-foreground: #e5e7eb;
+  --sidebar-border: #1e293b;
+  --sidebar-ring: #3b82f6;
 }
 
 @layer base {

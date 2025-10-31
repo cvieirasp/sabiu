@@ -116,9 +116,7 @@ export function ForgotPasswordForm() {
               aria-invalid={errors.email ? 'true' : 'false'}
             />
             {errors.email && (
-              <p className="text-sm text-destructive">
-                {errors.email.message}
-              </p>
+              <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
         </CardContent>

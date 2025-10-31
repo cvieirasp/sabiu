@@ -28,7 +28,9 @@ describe('SignUpForm', () => {
     expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/^senha$/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/confirmar senha/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /criar conta/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /criar conta/i })
+    ).toBeInTheDocument()
   })
 
   it('deve exibir link para página de login', () => {
@@ -47,7 +49,9 @@ describe('SignUpForm', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText(/o nome deve ter pelo menos 3 caracteres/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/o nome deve ter pelo menos 3 caracteres/i)
+      ).toBeInTheDocument()
     })
   })
 
@@ -147,7 +151,9 @@ describe('SignUpForm', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(screen.getByText(/este email já está cadastrado/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/este email já está cadastrado/i)
+      ).toBeInTheDocument()
     })
   })
 
@@ -155,7 +161,7 @@ describe('SignUpForm', () => {
     const user = userEvent.setup()
     ;(global.fetch as any).mockImplementation(
       () =>
-        new Promise((resolve) => {
+        new Promise(resolve => {
           setTimeout(() => {
             resolve({
               ok: true,
@@ -175,7 +181,9 @@ describe('SignUpForm', () => {
     const submitButton = screen.getByRole('button', { name: /criar conta/i })
     await user.click(submitButton)
 
-    expect(screen.getByRole('button', { name: /criando conta/i })).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: /criando conta/i })
+    ).toBeDisabled()
     expect(screen.getByLabelText(/nome completo/i)).toBeDisabled()
 
     await waitFor(() => {

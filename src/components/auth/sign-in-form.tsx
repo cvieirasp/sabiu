@@ -101,9 +101,7 @@ export function SignInForm() {
               aria-invalid={errors.email ? 'true' : 'false'}
             />
             {errors.email && (
-              <p className="text-sm text-destructive">
-                {errors.email.message}
-              </p>
+              <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
 
@@ -133,7 +131,11 @@ export function SignInForm() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <Button type="submit" className="w-full mt-8 cursor-pointer" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full mt-8 cursor-pointer"
+            disabled={isLoading}
+          >
             {isLoading ? 'Entrando...' : 'Entrar'}
           </Button>
           <p className="text-center text-sm text-muted-foreground">

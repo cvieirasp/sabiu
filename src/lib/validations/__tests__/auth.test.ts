@@ -61,7 +61,9 @@ describe('Auth Validations', () => {
       const result = signUpSchema.safeParse(invalidData)
       expect(result.success).toBe(false)
       if (!result.success) {
-        expect(result.error.issues.some((issue) => issue.path.includes('password'))).toBe(true)
+        expect(
+          result.error.issues.some(issue => issue.path.includes('password'))
+        ).toBe(true)
       }
     })
 
@@ -179,7 +181,7 @@ describe('Auth Validations', () => {
       expect(result.success).toBe(false)
       if (!result.success) {
         expect(
-          result.error.issues.some((issue) => issue.path.includes('password'))
+          result.error.issues.some(issue => issue.path.includes('password'))
         ).toBe(true)
       }
     })

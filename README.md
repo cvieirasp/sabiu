@@ -17,6 +17,8 @@ Aplicação web para registrar e visualizar sua evolução profissional através
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Scripts Disponíveis](#scripts-disponíveis)
 - [Variáveis de Ambiente](#variáveis-de-ambiente)
+- [Design System](#design-system)
+- [Providers Globais](#providers-globais)
 
 ---
 
@@ -311,6 +313,123 @@ O projeto utiliza o **Design System SABIU** com as seguintes cores:
 - **Info**: `#38BDF8`
 
 Suporta tema claro e escuro com alternância automática.
+
+---
+
+## 🔌 Providers Globais
+
+O projeto utiliza três providers principais que gerenciam estado global, autenticação e tema:
+
+### AuthProvider
+
+Gerencia a sessão de autenticação usando NextAuth.
+
+**Funcionalidades:**
+
+- Refresh automático de sessão
+- Estado de sessão acessível via `useSession()` hook
+- Atualizações otimistas de sessão
+
+**Exemplo de uso:**
+
+```tsx
+'use client'
+import { useSession } from 'next-auth/react'
+
+export function UserProfile() {
+  const { data: session, status } = useSession()
+
+  if (status === 'loading') return <div>Carregando...</div>
+  if (status === 'unauthenticated') return <div>Não autenticado</div>
+
+  return <div>Bem-vindo {session?.user?.name}</div>
+}
+```
+
+### QueryProvider
+
+Configura React Query (TanStack Query) para cache e gerenciamento de estado do servidor.
+
+**Configuração:**
+
+- Stale time: 5 minutos (dados considerados frescos)
+- Cache time: 10 minutos (dados mantidos em cache)
+- Refetch on window focus: apenas em produção
+- Retry: 1 tentativa
+
+**Exemplo de uso:**
+
+```tsx
+'use client'
+import { useQuery } from '@tanstack/react-query'
+
+export function ItemsList() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['items'],
+    queryFn: async () => {
+      const res = await fetch('/api/items')
+      return res.json()
+    },
+  })
+
+  if (isLoading) return <div>Carregando...</div>
+  if (error) return <div>Erro: {error.message}</div>
+
+  return <div>{/* renderizar itens */}</div>
+}
+```
+
+### ThemeProvider
+
+Permite alternância entre temas claro e escuro com persistência.
+
+**Funcionalidades:**
+
+- Detecção de preferência do sistema
+- Persistência em localStorage
+- Sem flash de conteúdo não estilizado
+- Transições suaves desabilitadas por padrão
+
+**Exemplo de uso:**
+
+```tsx
+'use client'
+import { useTheme } from 'next-themes'
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+
+  return (
+    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+      {theme === 'dark' ? '☀️' : '🌙'}
+    </button>
+  )
+}
+```
+
+### Uso Combinado
+
+Todos os providers são combinados no componente `Providers`:
+
+```tsx
+import { Providers } from '@/components/providers'
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+**Ordem dos providers:**
+
+1. **AuthProvider** - Mais externo (sessão necessária em toda parte)
+2. **QueryProvider** - No meio (precisa de auth para queries protegidas)
+3. **ThemeProvider** - Mais interno (apenas visual, sem dependências)
 
 ---
 

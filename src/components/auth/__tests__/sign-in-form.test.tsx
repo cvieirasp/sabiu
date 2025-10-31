@@ -34,7 +34,9 @@ describe('SignInForm', () => {
     expect(entrarElements.length).toBeGreaterThan(0)
     expect(screen.getByLabelText(/^email$/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/^senha$/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /^entrar$/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /^entrar$/i })
+    ).toBeInTheDocument()
   })
 
   it('deve exibir link para página de cadastro', () => {
@@ -124,9 +126,7 @@ describe('SignInForm', () => {
     await user.click(submitButton)
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/email ou senha incorretos/i)
-      ).toBeInTheDocument()
+      expect(screen.getByText(/email ou senha incorretos/i)).toBeInTheDocument()
     })
   })
 
@@ -134,7 +134,7 @@ describe('SignInForm', () => {
     const user = userEvent.setup()
     mockSignIn.mockImplementation(
       () =>
-        new Promise((resolve) => {
+        new Promise(resolve => {
           setTimeout(() => {
             resolve({ ok: true, error: null })
           }, 100)

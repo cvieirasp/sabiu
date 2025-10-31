@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 describe('Middleware Configuration', () => {
   it('deve proteger rotas do dashboard', () => {
@@ -16,8 +16,8 @@ describe('Middleware Configuration', () => {
       '/api/modules/:path*',
     ]
 
-    protectedRoutes.forEach((route) => {
-      const isProtected = matcher.some((pattern) => {
+    protectedRoutes.forEach(route => {
+      const isProtected = matcher.some(pattern => {
         // Convert Next.js matcher pattern to regex
         // :path* means match anything after this point (including nothing)
         const regexPattern = pattern
@@ -41,8 +41,8 @@ describe('Middleware Configuration', () => {
       '/api/modules/:path*',
     ]
 
-    protectedRoutes.forEach((route) => {
-      const isProtected = matcher.some((pattern) => {
+    protectedRoutes.forEach(route => {
+      const isProtected = matcher.some(pattern => {
         const regexPattern = pattern
           .replace(/\/:path\*/g, '(/.*)?')
           .replace(/:\w+/g, '[^/]+')
@@ -69,8 +69,8 @@ describe('Middleware Configuration', () => {
       '/api/modules/:path*',
     ]
 
-    protectedRoutes.forEach((route) => {
-      const isProtected = matcher.some((pattern) => {
+    protectedRoutes.forEach(route => {
+      const isProtected = matcher.some(pattern => {
         const regexPattern = pattern
           .replace(/\/:path\*/g, '(/.*)?')
           .replace(/:\w+/g, '[^/]+')
@@ -98,8 +98,8 @@ describe('Middleware Configuration', () => {
       '/api/modules/:path*',
     ]
 
-    publicRoutes.forEach((route) => {
-      const isProtected = matcher.some((pattern) => {
+    publicRoutes.forEach(route => {
+      const isProtected = matcher.some(pattern => {
         const regexPattern = pattern
           .replace(/\/:path\*/g, '(/.*)?')
           .replace(/:\w+/g, '[^/]+')
@@ -121,7 +121,7 @@ describe('Middleware Configuration', () => {
       '/api/modules/:path*',
     ]
 
-    const isProtected = matcher.some((pattern) => {
+    const isProtected = matcher.some(pattern => {
       const regexPattern = pattern
         .replace(/\/:path\*/g, '(/.*)?')
         .replace(/:\w+/g, '[^/]+')

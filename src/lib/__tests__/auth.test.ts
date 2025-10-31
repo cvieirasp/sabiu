@@ -22,7 +22,7 @@ describe('NextAuth Configuration', () => {
 
     it('deve ter provider Credentials configurado', () => {
       const credentialsProvider = authOptions.providers.find(
-        (provider) => provider.id === 'credentials'
+        provider => provider.id === 'credentials'
       )
       expect(credentialsProvider).toBeDefined()
       expect(credentialsProvider?.type).toBe('credentials')

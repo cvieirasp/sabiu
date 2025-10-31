@@ -36,17 +36,17 @@ export async function POST(request: Request) {
     const resetToken = crypto.randomBytes(32).toString('hex')
     const resetTokenExpiry = new Date(Date.now() + 3600000) // 1 hour
 
-    // Store token in database
-    await prisma.verificationToken.upsert({
+    // Delete any existing token for this user
+    await prisma.verificationToken.deleteMany({
       where: {
         identifier: user.email,
       },
-      create: {
+    })
+
+    // Store new token in database
+    await prisma.verificationToken.create({
+      data: {
         identifier: user.email,
-        token: resetToken,
-        expires: resetTokenExpiry,
-      },
-      update: {
         token: resetToken,
         expires: resetTokenExpiry,
       },

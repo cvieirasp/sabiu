@@ -8,19 +8,21 @@ export const metadata: Metadata = {
 }
 
 interface ResetPasswordPageProps {
-  searchParams: { token?: string }
+  searchParams: Promise<{ token?: string }>
 }
 
-export default function ResetPasswordPage({
+export default async function ResetPasswordPage({
   searchParams,
 }: ResetPasswordPageProps) {
-  if (!searchParams.token) {
+  const params = await searchParams
+
+  if (!params.token) {
     redirect('/forgot-password')
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <ResetPasswordForm token={searchParams.token} />
+      <ResetPasswordForm token={params.token} />
     </div>
   )
 }

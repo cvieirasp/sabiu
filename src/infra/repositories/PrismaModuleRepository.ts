@@ -11,15 +11,15 @@ export class PrismaModuleRepository implements ModuleRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
   async findById(id: string): Promise<Module | null> {
-    const moduleData = await this.prisma.module.findUnique({
+    const prismaModule = await this.prisma.module.findUnique({
       where: { id },
     })
 
-    if (!moduleData) {
+    if (!prismaModule) {
       return null
     }
 
-    return ModuleMapper.toDomain(moduleData)
+    return ModuleMapper.toDomain(prismaModule)
   }
 
   async findByLearningItemId(

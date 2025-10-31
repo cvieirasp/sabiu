@@ -1,0 +1,15 @@
+GET http://localhost:3000/api/items
+
+###
+
+GET https://example.com/topics/1
+
+###
+
+POST https://example.com/comments
+content-type: application/json
+
+{
+    "name": "sample",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}

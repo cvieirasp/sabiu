@@ -1,4 +1,4 @@
-import { LearningItem, Module } from '../entities'
+import { LearningItem } from '../entities'
 import { StatusVO } from '../value-objects'
 import {
   LearningItemRepository,

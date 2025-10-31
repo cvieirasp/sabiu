@@ -21,6 +21,8 @@ model User {
   items        LearningItem[]
   accounts     Account[]
   sessions     Session[]
+
+  @@map("users")
 }
 
 // NextAuth models
@@ -41,6 +43,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Session {
@@ -49,6 +52,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
 }
 
 model VerificationToken {
@@ -57,6 +62,7 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("verification_tokens")
 }
 
 // Category model
@@ -65,6 +71,8 @@ model Category {
   name  String         @unique
   color String
   items LearningItem[]
+
+  @@map("categories")
 }
 
 // LearningItem model
@@ -89,6 +97,7 @@ model LearningItem {
   @@index([userId])
   @@index([categoryId])
   @@index([status])
+  @@map("learning_items")
 }
 
 // Status enum
@@ -118,6 +127,7 @@ model Module {
   learningItem   LearningItem @relation(fields: [learningItemId], references: [id], onDelete: Cascade)
 
   @@index([learningItemId])
+  @@map("modules")
 }
 
 // Dependency model (prerequisites)
@@ -132,6 +142,7 @@ model Dependency {
   @@unique([sourceItemId, targetItemId])
   @@index([sourceItemId])
   @@index([targetItemId])
+  @@map("dependencies")
 }
 
 // Tag model
@@ -139,6 +150,8 @@ model Tag {
   id    String            @id @default(cuid())
   name  String            @unique
   items LearningItemTag[]
+
+  @@map("tags")
 }
 
 // LearningItemTag (many-to-many relationship)
@@ -151,4 +164,5 @@ model LearningItemTag {
   @@id([learningItemId, tagId])
   @@index([learningItemId])
   @@index([tagId])
+  @@map("learning_item_tags")
 }

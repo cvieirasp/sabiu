@@ -26,6 +26,7 @@ export function SignInForm() {
   const [error, setError] = useState<string | null>(null)
 
   const registered = searchParams.get('registered')
+  const reset = searchParams.get('reset')
 
   const {
     register,
@@ -74,6 +75,12 @@ export function SignInForm() {
           {registered && (
             <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600 dark:text-green-400">
               Conta criada com sucesso! Faça login para continuar.
+            </div>
+          )}
+
+          {reset === 'success' && (
+            <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600 dark:text-green-400">
+              Senha redefinida com sucesso! Faça login com sua nova senha.
             </div>
           )}
 

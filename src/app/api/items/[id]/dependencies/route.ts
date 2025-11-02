@@ -14,6 +14,7 @@ import {
   ApiErrorCode,
   handleApiError,
   createSuccessResponse,
+  createCreatedResponse,
 } from '@/lib/api-errors'
 
 /**
@@ -255,7 +256,7 @@ export async function POST(
         dependenciesToCreate
       )
 
-      return createSuccessResponse(
+      return createCreatedResponse(
         {
           dependencies: created.map((dep) => ({
             id: dep.id,
@@ -324,7 +325,7 @@ export async function POST(
       // Save to database
       const created = await dependencyRepository.create(dependency)
 
-      return createSuccessResponse(
+      return createCreatedResponse(
         {
           dependency: {
             id: created.id,

@@ -2,7 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { GET, POST } from '../route'
 import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/prisma'
-import { Status } from '@prisma/client'
+import { Prisma, Status } from '@prisma/client'
+import { NextRequest } from 'next/server'
 
 // Mock dependencies
 vi.mock('next-auth')
@@ -20,10 +21,10 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-const MOCK_USER_ID = 'user-123'
-const MOCK_ITEM_ID = 'item-123'
-const MOCK_TARGET_ID_1 = 'target-1'
-const MOCK_TARGET_ID_2 = 'target-2'
+const MOCK_USER_ID = 'cmhgxcpyk000104js70687ssk'
+const MOCK_ITEM_ID = 'cmhgxcpyk000204js7yp70ruu'
+const MOCK_TARGET_ID_1 = 'cmhgxcpyk000304js7118et91'
+const MOCK_TARGET_ID_2 = 'cmhgxcpyk000404js2ps8ghwm'
 
 describe('GET /api/items/[id]/dependencies', () => {
   beforeEach(() => {
@@ -33,7 +34,7 @@ describe('GET /api/items/[id]/dependencies', () => {
   it('should return 401 if not authenticated', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`
     )
     const response = await GET(request, { params: { id: MOCK_ITEM_ID } })
@@ -51,7 +52,7 @@ describe('GET /api/items/[id]/dependencies', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(null)
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`
     )
     const response = await GET(request, { params: { id: MOCK_ITEM_ID } })
@@ -80,7 +81,7 @@ describe('GET /api/items/[id]/dependencies', () => {
       updatedAt: new Date(),
     })
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`
     )
     const response = await GET(request, { params: { id: MOCK_ITEM_ID } })
@@ -96,9 +97,9 @@ describe('GET /api/items/[id]/dependencies', () => {
       expires: '',
     })
 
-    vi.mocked(prisma.learningItem.findUnique).mockImplementation(async (args) => {
-      if (args?.where?.id === MOCK_ITEM_ID) {
-        return {
+    vi.mocked(prisma.learningItem.findUnique).mockImplementation((args) => {
+      const result = (args?.where?.id === MOCK_ITEM_ID)
+        ? {
           id: MOCK_ITEM_ID,
           userId: MOCK_USER_ID,
           title: 'Test Item',
@@ -110,19 +111,19 @@ describe('GET /api/items/[id]/dependencies', () => {
           createdAt: new Date(),
           updatedAt: new Date(),
         }
-      }
-      return {
-        id: args?.where?.id as string,
-        userId: MOCK_USER_ID,
-        title: 'Target Item',
-        descriptionMD: '',
-        dueDate: null,
-        status: Status.Concluido,
-        categoryId: null,
-        progressCached: 100,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
+        : {
+          id: args?.where?.id as string,
+          userId: MOCK_USER_ID,
+          title: 'Target Item',
+          descriptionMD: '',
+          dueDate: null,
+          status: Status.Concluido,
+          categoryId: null,
+          progressCached: 100,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }
+      return Promise.resolve(result) as unknown as Prisma.Prisma__LearningItemClient<typeof result>;
     })
 
     vi.mocked(prisma.dependency.findMany).mockResolvedValue([
@@ -134,7 +135,7 @@ describe('GET /api/items/[id]/dependencies', () => {
       },
     ])
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`
     )
     const response = await GET(request, { params: { id: MOCK_ITEM_ID } })
@@ -167,7 +168,7 @@ describe('GET /api/items/[id]/dependencies', () => {
 
     vi.mocked(prisma.dependency.findMany).mockResolvedValue([])
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies?type=prerequisites`
     )
     const response = await GET(request, { params: { id: MOCK_ITEM_ID } })
@@ -188,7 +189,7 @@ describe('POST /api/items/[id]/dependencies', () => {
   it('should return 401 if not authenticated', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`,
       {
         method: 'POST',
@@ -210,7 +211,7 @@ describe('POST /api/items/[id]/dependencies', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(null)
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`,
       {
         method: 'POST',
@@ -253,7 +254,7 @@ describe('POST /api/items/[id]/dependencies', () => {
       createdAt: new Date(),
     })
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`,
       {
         method: 'POST',
@@ -291,8 +292,22 @@ describe('POST /api/items/[id]/dependencies', () => {
     vi.mocked(prisma.dependency.findMany).mockResolvedValue([])
 
     vi.mocked(prisma.dependency.createMany).mockResolvedValue({ count: 2 })
+    vi.mocked(prisma.dependency.findMany).mockResolvedValue([
+      {
+        id: 'dep-1',
+        sourceItemId: MOCK_ITEM_ID,
+        targetItemId: MOCK_TARGET_ID_1,
+        createdAt: new Date(),
+      },
+      {
+        id: 'dep-2',
+        sourceItemId: MOCK_ITEM_ID,
+        targetItemId: MOCK_TARGET_ID_2,
+        createdAt: new Date(),
+      },
+    ])
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`,
       {
         method: 'POST',
@@ -303,6 +318,8 @@ describe('POST /api/items/[id]/dependencies', () => {
     )
     const response = await POST(request, { params: { id: MOCK_ITEM_ID } })
     const data = await response.json()
+
+    console.log(data)
 
     expect(response.status).toBe(201)
     expect(data.success).toBe(true)
@@ -335,7 +352,7 @@ describe('POST /api/items/[id]/dependencies', () => {
       createdAt: new Date(),
     })
 
-    const request = new Request(
+    const request = new NextRequest(
       `http://localhost:3000/api/items/${MOCK_ITEM_ID}/dependencies`,
       {
         method: 'POST',

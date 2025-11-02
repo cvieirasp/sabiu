@@ -41,12 +41,10 @@ export class PrismaDependencyRepository implements DependencyRepository {
     sourceItemId: string,
     targetItemId: string
   ): Promise<Dependency | null> {
-    const dependency = await this.prisma.dependency.findUnique({
+    const dependency = await this.prisma.dependency.findFirst({
       where: {
-        sourceItemId_targetItemId: {
-          sourceItemId,
-          targetItemId,
-        },
+        sourceItemId,
+        targetItemId,
       },
     })
 

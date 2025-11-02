@@ -48,6 +48,18 @@ interface ItemsResponse {
   }
 }
 
+async function fetchCategories() {
+  const response = await fetch('/api/categories')
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch categories')
+  }
+
+  const result = await response.json()
+
+  return result.data as { id: string; name: string; color: string }[]
+}
+
 async function fetchItems(params: {
   page: number
   limit: number
@@ -144,6 +156,12 @@ export default function ItemsPage() {
   // Sorting state
   const [sortField, setSortField] = useState<SortField | null>('createdAt')
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+
+  // Fetch categories with React Query
+  const { data: categoriesData } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  })
 
   // Fetch items with React Query
   const {
@@ -326,6 +344,11 @@ export default function ItemsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
+            {categoriesData && categoriesData.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

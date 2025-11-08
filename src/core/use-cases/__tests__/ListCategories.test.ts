@@ -4,36 +4,36 @@ import type { CategoryRepository } from '@/core/interfaces/CategoryRepository'
 import { ListCategories, CategoryOutput } from '@/core/use-cases/ListCategories'
 
 describe('ListCategories', () => {
-    let listCategories: ListCategories
-    let mockCategoryRepository: CategoryRepository
-    let mockCategories: Category[]
+  let listCategories: ListCategories
+  let mockCategoryRepository: CategoryRepository
+  let mockCategories: Category[]
 
-    beforeEach(() => {
-      // Create mock categories
-      mockCategories = [
-        Category.create({
-            id: 'cat-1',
-            name: 'MBA',
-            color: '#FF5733',
-        }),
-        Category.create({
-            id: 'cat-2',
-            name: 'Curso',
-            color: '#33FF57',
-        }),
-        Category.create({
-            id: 'cat-3',
-            name: 'Livro',
-            color: '#3357FF',
-        }),
-      ]
+  beforeEach(() => {
+    // Create mock categories
+    mockCategories = [
+      Category.create({
+        id: 'cat-1',
+        name: 'MBA',
+        color: '#FF5733',
+      }),
+      Category.create({
+        id: 'cat-2',
+        name: 'Curso',
+        color: '#33FF57',
+      }),
+      Category.create({
+        id: 'cat-3',
+        name: 'Livro',
+        color: '#3357FF',
+      }),
+    ]
 
-      // Mock repository
-      mockCategoryRepository = {
-        findAll: async () => mockCategories,
-      } as Partial<CategoryRepository> as CategoryRepository
+    // Mock repository
+    mockCategoryRepository = {
+      findAll: async () => mockCategories,
+    } as Partial<CategoryRepository> as CategoryRepository
 
-      listCategories = new ListCategories(mockCategoryRepository)
+    listCategories = new ListCategories(mockCategoryRepository)
   })
 
   describe('execute', () => {

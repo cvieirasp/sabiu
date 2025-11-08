@@ -41,7 +41,11 @@ export async function POST(request: NextRequest) {
     const targetItem = await itemRepository.findById(validated.targetItemId)
 
     if (!sourceItem || !targetItem) {
-      throw new ApiError('One or both items not found', ApiErrorCode.NOT_FOUND, 404)
+      throw new ApiError(
+        'One or both items not found',
+        ApiErrorCode.NOT_FOUND,
+        404
+      )
     }
 
     if (

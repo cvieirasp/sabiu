@@ -34,13 +34,15 @@ export class DependencyMapper {
    * Convert multiple Prisma models to Domain Entities
    */
   static toDomainMany(prismaModels: PrismaDependency[]): Dependency[] {
-    return prismaModels.map((model) => this.toDomain(model))
+    return prismaModels.map(model => this.toDomain(model))
   }
 
   /**
    * Convert multiple Domain Entities to Prisma inputs
    */
-  static toPrismaMany(entities: Dependency[]): Omit<PrismaDependency, 'createdAt'>[] {
-    return entities.map((entity) => this.toPrisma(entity))
+  static toPrismaMany(
+    entities: Dependency[]
+  ): Omit<PrismaDependency, 'createdAt'>[] {
+    return entities.map(entity => this.toPrisma(entity))
   }
 }

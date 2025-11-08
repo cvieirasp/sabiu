@@ -20,11 +20,12 @@ import {
   PrismaDependencyRepository,
 } from '@/infra/repositories'
 import {
-  GetLearningItem,
   UpdateLearningItem,
   DeleteLearningItem,
 } from '@/core/use-cases'
 import { StatusVO } from '@/core/value-objects'
+
+import { makeGetLearningItem } from '@/infra/factories/MakeGetLearningItem'
 
 /**
  * GET /api/items/[id]
@@ -52,9 +53,8 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams
     const includeModules = searchParams.get('includeModules') === 'true'
 
-    // Initialize repository and use case
-    const learningItemRepository = new PrismaLearningItemRepository(prisma)
-    const getLearningItem = new GetLearningItem(learningItemRepository)
+    // Initialize use case
+    const getLearningItem = makeGetLearningItem()
 
     // Execute use case
     const result = await getLearningItem.execute({
@@ -65,27 +65,16 @@ export async function GET(
 
     // Map domain entity to response DTO
     const item = {
-      id: result.learningItem.id,
-      title: result.learningItem.title,
-      descriptionMD: result.learningItem.descriptionMD,
-      dueDate: result.learningItem.dueDate,
-      status: result.learningItem.status.value,
-      progress: result.learningItem.progress.value,
-      userId: result.learningItem.userId,
-      categoryId: result.learningItem.categoryId,
-      createdAt: result.learningItem.createdAt,
-      updatedAt: result.learningItem.updatedAt,
-      modules: includeModules
-        ? result.learningItem.modules.map((module) => ({
-            id: module.id,
-            learningItemId: module.learningItemId,
-            title: module.title,
-            status: module.status.value,
-            order: module.order,
-            createdAt: module.createdAt,
-            updatedAt: module.updatedAt,
-          }))
-        : undefined,
+      id: result.id,
+      title: result.title,
+      descriptionMD: result.descriptionMD,
+      dueDate: result.dueDate,
+      status: result.status,
+      progress: result.progress,
+      userId: result.userId,
+      category: result.category,
+      createdAt: result.createdAt,
+      updatedAt: result.updatedAt,
     }
 
     return createSuccessResponse(item)
@@ -163,7 +152,7 @@ export async function PUT(
       categoryId: result.learningItem.categoryId,
       createdAt: result.learningItem.createdAt,
       updatedAt: result.learningItem.updatedAt,
-      modules: result.learningItem.modules.map((module) => ({
+      modules: result.learningItem.modules.map(module => ({
         id: module.id,
         learningItemId: module.learningItemId,
         title: module.title,

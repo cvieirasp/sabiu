@@ -87,11 +87,7 @@ export function createValidationError(error: ZodError<any>): ApiError {
  * Creates a not found error
  */
 export function createNotFoundError(resource: string): ApiError {
-  return new ApiError(
-    `${resource} não encontrado`,
-    ApiErrorCode.NOT_FOUND,
-    404
-  )
+  return new ApiError(`${resource} não encontrado`, ApiErrorCode.NOT_FOUND, 404)
 }
 
 /**
@@ -174,22 +170,14 @@ export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
 
     // Check if it's a not found error
     if (error.message.includes('not found')) {
-      const apiError = new ApiError(
-        error.message,
-        ApiErrorCode.NOT_FOUND,
-        404
-      )
+      const apiError = new ApiError(error.message, ApiErrorCode.NOT_FOUND, 404)
       return NextResponse.json(apiError.toJSON(), {
         status: apiError.statusCode,
       })
     }
 
     // Generic domain error
-    const apiError = new ApiError(
-      error.message,
-      ApiErrorCode.BAD_REQUEST,
-      400
-    )
+    const apiError = new ApiError(error.message, ApiErrorCode.BAD_REQUEST, 400)
     return NextResponse.json(apiError.toJSON(), { status: apiError.statusCode })
   }
 
@@ -217,9 +205,10 @@ export function createSuccessResponse<T>(
   if (meta) {
     response.meta = {
       ...meta,
-      hasMore: meta.total && meta.page && meta.limit
-        ? meta.page * meta.limit < meta.total
-        : undefined,
+      hasMore:
+        meta.total && meta.page && meta.limit
+          ? meta.page * meta.limit < meta.total
+          : undefined,
     }
   }
 

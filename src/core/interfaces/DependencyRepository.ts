@@ -98,10 +98,7 @@ export interface DependencyRepository {
    * @param targetItemId - Target learning item ID
    * @returns True if it would create a cycle, false otherwise
    */
-  wouldCreateCycle(
-    sourceItemId: string,
-    targetItemId: string
-  ): Promise<boolean>
+  wouldCreateCycle(sourceItemId: string, targetItemId: string): Promise<boolean>
 
   /**
    * Get the full dependency graph for a set of items

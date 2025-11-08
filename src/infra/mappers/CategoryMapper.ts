@@ -33,13 +33,13 @@ export class CategoryMapper {
    * Convert multiple Prisma models to Domain Entities
    */
   static toDomainMany(prismaModels: PrismaCategory[]): Category[] {
-    return prismaModels.map((model) => this.toDomain(model))
+    return prismaModels.map(model => this.toDomain(model))
   }
 
   /**
    * Convert multiple Domain Entities to Prisma inputs
    */
   static toPrismaMany(entities: Category[]): PrismaCategory[] {
-    return entities.map((entity) => this.toPrisma(entity))
+    return entities.map(entity => this.toPrisma(entity))
   }
 }

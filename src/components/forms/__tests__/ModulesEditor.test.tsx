@@ -1,12 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ModulesEditor, type ModulesEditorProps, type ModuleData } from '../ModulesEditor'
+import {
+  ModulesEditor,
+  type ModulesEditorProps,
+  type ModuleData,
+} from '../ModulesEditor'
 import { ModuleStatus } from '@prisma/client'
 
 // Mock @dnd-kit modules
 vi.mock('@dnd-kit/core', () => ({
-  DndContext: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DndContext: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   closestCenter: vi.fn(),
   useSensor: vi.fn(),
   useSensors: vi.fn(() => []),
@@ -15,7 +21,9 @@ vi.mock('@dnd-kit/core', () => ({
 }))
 
 vi.mock('@dnd-kit/sortable', () => ({
-  SortableContext: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  SortableContext: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   useSortable: () => ({
     attributes: {},
     listeners: {},
@@ -99,8 +107,12 @@ describe('ModulesEditor', () => {
     it('should show empty state when no modules', () => {
       render(<ModulesEditor {...defaultProps} modules={[]} />)
 
-      expect(screen.getByText(/nenhum módulo adicionado ainda/i)).toBeInTheDocument()
-      expect(screen.getByText(/clique em "adicionar módulo" para começar/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/nenhum módulo adicionado ainda/i)
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(/clique em "adicionar módulo" para começar/i)
+      ).toBeInTheDocument()
     })
 
     it('should display progress percentage', () => {
@@ -111,7 +123,7 @@ describe('ModulesEditor', () => {
     })
 
     it('should show 0% progress when no modules completed', () => {
-      const pendingModules = mockModules.map((m) => ({
+      const pendingModules = mockModules.map(m => ({
         ...m,
         status: ModuleStatus.Pendente,
       }))
@@ -121,7 +133,7 @@ describe('ModulesEditor', () => {
     })
 
     it('should show 100% progress when all modules completed', () => {
-      const completedModules = mockModules.map((m) => ({
+      const completedModules = mockModules.map(m => ({
         ...m,
         status: ModuleStatus.Concluido,
       }))
@@ -133,7 +145,9 @@ describe('ModulesEditor', () => {
     it('should render add module button', () => {
       render(<ModulesEditor {...defaultProps} />)
 
-      expect(screen.getByRole('button', { name: /adicionar módulo/i })).toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: /adicionar módulo/i })
+      ).toBeInTheDocument()
     })
   })
 
@@ -142,18 +156,26 @@ describe('ModulesEditor', () => {
       const user = userEvent.setup()
       render(<ModulesEditor {...defaultProps} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
-      expect(screen.getByPlaceholderText(/título do módulo/i)).toBeInTheDocument()
+      expect(
+        screen.getByPlaceholderText(/título do módulo/i)
+      ).toBeInTheDocument()
     })
 
     it('should add new module when title is provided', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
       const input = screen.getByPlaceholderText(/título do módulo/i)
@@ -161,7 +183,7 @@ describe('ModulesEditor', () => {
 
       // Find check button (first button with lucide-check class)
       const buttons = screen.getAllByRole('button')
-      const confirmButton = buttons.find((btn) =>
+      const confirmButton = buttons.find(btn =>
         btn.querySelector('.lucide-check')
       )
       await user.click(confirmButton!)
@@ -184,17 +206,21 @@ describe('ModulesEditor', () => {
       const user = userEvent.setup()
       render(<ModulesEditor {...defaultProps} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
       const buttons = screen.getAllByRole('button')
-      const confirmButton = buttons.find((btn) =>
+      const confirmButton = buttons.find(btn =>
         btn.querySelector('.lucide-check')
       )
       await user.click(confirmButton!)
 
       await waitFor(() => {
-        expect(screen.getByText(/título do módulo não pode estar vazio/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/título do módulo não pode estar vazio/i)
+        ).toBeInTheDocument()
       })
     })
 
@@ -202,7 +228,9 @@ describe('ModulesEditor', () => {
       const user = userEvent.setup()
       render(<ModulesEditor {...defaultProps} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
       const input = screen.getByPlaceholderText(/título do módulo/i)
@@ -210,41 +238,55 @@ describe('ModulesEditor', () => {
       await user.type(input, longTitle)
 
       const buttons = screen.getAllByRole('button')
-      const confirmButton = buttons.find((btn) =>
+      const confirmButton = buttons.find(btn =>
         btn.querySelector('.lucide-check')
       )
       await user.click(confirmButton!)
 
       await waitFor(() => {
-        expect(screen.getByText(/título não pode exceder 200 caracteres/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/título não pode exceder 200 caracteres/i)
+        ).toBeInTheDocument()
       })
     })
 
     it('should cancel adding module when cancel button is clicked', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
       const input = screen.getByPlaceholderText(/título do módulo/i)
       await user.type(input, 'Test Module')
 
       const buttons = screen.getAllByRole('button')
-      const cancelButton = buttons.find((btn) => btn.querySelector('svg')?.classList.contains('lucide-x'))
+      const cancelButton = buttons.find(btn =>
+        btn.querySelector('svg')?.classList.contains('lucide-x')
+      )
       await user.click(cancelButton!)
 
-      expect(screen.queryByPlaceholderText(/título do módulo/i)).not.toBeInTheDocument()
+      expect(
+        screen.queryByPlaceholderText(/título do módulo/i)
+      ).not.toBeInTheDocument()
       expect(onModulesChange).not.toHaveBeenCalled()
     })
 
     it('should add module when Enter key is pressed', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
       const input = screen.getByPlaceholderText(/título do módulo/i)
@@ -265,13 +307,17 @@ describe('ModulesEditor', () => {
       const user = userEvent.setup()
       render(<ModulesEditor {...defaultProps} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       await user.click(addButton)
 
       const input = screen.getByPlaceholderText(/título do módulo/i)
       await user.type(input, 'Test{Escape}')
 
-      expect(screen.queryByPlaceholderText(/título do módulo/i)).not.toBeInTheDocument()
+      expect(
+        screen.queryByPlaceholderText(/título do módulo/i)
+      ).not.toBeInTheDocument()
     })
   })
 
@@ -280,15 +326,21 @@ describe('ModulesEditor', () => {
     const getFirstEditButton = (_container: HTMLElement) => {
       // Edit button appears after the module title "Introdução ao TypeScript"
       const moduleTitle = screen.getByText('Introdução ao TypeScript')
-      const moduleContainer = moduleTitle.closest('[class*="flex items-center gap-2"]')
+      const moduleContainer = moduleTitle.closest(
+        '[class*="flex items-center gap-2"]'
+      )
       if (!moduleContainer) return null
 
       // Find all buttons in that container
       const buttons = Array.from(moduleContainer.querySelectorAll('button'))
       // The edit button has Edit2 icon (not trash icon)
-      return buttons.find((btn) => {
+      return buttons.find(btn => {
         const svg = btn.querySelector('svg')
-        return svg && !svg.classList.contains('lucide-trash-2') && !svg.classList.contains('lucide-grip-vertical')
+        return (
+          svg &&
+          !svg.classList.contains('lucide-trash-2') &&
+          !svg.classList.contains('lucide-grip-vertical')
+        )
       })
     }
 
@@ -314,7 +366,9 @@ describe('ModulesEditor', () => {
     it.skip('should update module title when edited', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      const { container } = render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      const { container } = render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const editButton = getFirstEditButton(container)
       if (!editButton) throw new Error('Edit button not found')
@@ -357,7 +411,9 @@ describe('ModulesEditor', () => {
       await user.click(saveButton)
 
       await waitFor(() => {
-        expect(screen.getByText(/título do módulo não pode estar vazio/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/título do módulo não pode estar vazio/i)
+        ).toBeInTheDocument()
       })
     })
 
@@ -365,14 +421,18 @@ describe('ModulesEditor', () => {
     it.skip('should close edit dialog when cancel is clicked', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      const { container } = render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      const { container } = render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const editButton = getFirstEditButton(container)
       if (!editButton) throw new Error('Edit button not found')
 
       await user.click(editButton)
 
-      const cancelButton = await screen.findByRole('button', { name: /cancelar/i })
+      const cancelButton = await screen.findByRole('button', {
+        name: /cancelar/i,
+      })
       await user.click(cancelButton)
 
       await waitFor(() => {
@@ -385,7 +445,9 @@ describe('ModulesEditor', () => {
     it.skip('should save when Enter key is pressed in edit dialog', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      const { container } = render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      const { container } = render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const editButton = getFirstEditButton(container)
       if (!editButton) throw new Error('Edit button not found')
@@ -414,26 +476,36 @@ describe('ModulesEditor', () => {
       render(<ModulesEditor {...defaultProps} />)
 
       const deleteButtons = screen.getAllByRole('button', { name: '' })
-      const deleteButton = deleteButtons.find((btn) => btn.querySelector('svg')?.classList.contains('lucide-trash-2'))
+      const deleteButton = deleteButtons.find(btn =>
+        btn.querySelector('svg')?.classList.contains('lucide-trash-2')
+      )
       await user.click(deleteButton!)
 
       await waitFor(() => {
         expect(screen.getByRole('dialog')).toBeInTheDocument()
         expect(screen.getByText(/remover módulo/i)).toBeInTheDocument()
-        expect(screen.getByText(/tem certeza que deseja remover este módulo/i)).toBeInTheDocument()
+        expect(
+          screen.getByText(/tem certeza que deseja remover este módulo/i)
+        ).toBeInTheDocument()
       })
     })
 
     it('should delete module when confirmed', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const deleteButtons = screen.getAllByRole('button', { name: '' })
-      const deleteButton = deleteButtons.find((btn) => btn.querySelector('svg')?.classList.contains('lucide-trash-2'))
+      const deleteButton = deleteButtons.find(btn =>
+        btn.querySelector('svg')?.classList.contains('lucide-trash-2')
+      )
       await user.click(deleteButton!)
 
-      const confirmButton = await screen.findByRole('button', { name: /remover/i })
+      const confirmButton = await screen.findByRole('button', {
+        name: /remover/i,
+      })
       await user.click(confirmButton)
 
       await waitFor(() => {
@@ -444,9 +516,7 @@ describe('ModulesEditor', () => {
           ])
         )
         expect(onModulesChange).not.toHaveBeenCalledWith(
-          expect.arrayContaining([
-            expect.objectContaining({ id: 'module-1' }),
-          ])
+          expect.arrayContaining([expect.objectContaining({ id: 'module-1' })])
         )
       })
     })
@@ -454,13 +524,19 @@ describe('ModulesEditor', () => {
     it('should reorder modules after deletion', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const deleteButtons = screen.getAllByRole('button', { name: '' })
-      const deleteButton = deleteButtons.find((btn) => btn.querySelector('svg')?.classList.contains('lucide-trash-2'))
+      const deleteButton = deleteButtons.find(btn =>
+        btn.querySelector('svg')?.classList.contains('lucide-trash-2')
+      )
       await user.click(deleteButton!)
 
-      const confirmButton = await screen.findByRole('button', { name: /remover/i })
+      const confirmButton = await screen.findByRole('button', {
+        name: /remover/i,
+      })
       await user.click(confirmButton)
 
       await waitFor(() => {
@@ -473,13 +549,19 @@ describe('ModulesEditor', () => {
     it('should cancel deletion when cancel is clicked', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const deleteButtons = screen.getAllByRole('button', { name: '' })
-      const deleteButton = deleteButtons.find((btn) => btn.querySelector('svg')?.classList.contains('lucide-trash-2'))
+      const deleteButton = deleteButtons.find(btn =>
+        btn.querySelector('svg')?.classList.contains('lucide-trash-2')
+      )
       await user.click(deleteButton!)
 
-      const cancelButton = await screen.findByRole('button', { name: /cancelar/i })
+      const cancelButton = await screen.findByRole('button', {
+        name: /cancelar/i,
+      })
       await user.click(cancelButton)
 
       await waitFor(() => {
@@ -494,7 +576,9 @@ describe('ModulesEditor', () => {
     it.skip('should update module status when changed', async () => {
       const user = userEvent.setup()
       const onModulesChange = vi.fn()
-      render(<ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />)
+      render(
+        <ModulesEditor {...defaultProps} onModulesChange={onModulesChange} />
+      )
 
       const statusSelects = screen.getAllByRole('combobox')
       await user.click(statusSelects[0])
@@ -528,14 +612,18 @@ describe('ModulesEditor', () => {
     it('should disable all inputs when loading', () => {
       render(<ModulesEditor {...defaultProps} isLoading={true} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       expect(addButton).toBeDisabled()
     })
 
     it('should disable all inputs when disabled prop is true', () => {
       render(<ModulesEditor {...defaultProps} disabled={true} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar módulo/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar módulo/i,
+      })
       expect(addButton).toBeDisabled()
     })
 
@@ -572,7 +660,7 @@ describe('ModulesEditor', () => {
       expect(screen.getByText('33% concluído')).toBeInTheDocument()
 
       // Simulate status change
-      const updatedModules = mockModules.map((m) => ({
+      const updatedModules = mockModules.map(m => ({
         ...m,
         status: m.id === 'module-2' ? ModuleStatus.Concluido : m.status,
       }))

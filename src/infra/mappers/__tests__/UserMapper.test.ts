@@ -70,7 +70,7 @@ describe('UserMapper', () => {
         updateEmail: () => {},
         updatePassword: () => {},
         equals: () => false,
-        toObject: () => ({} as any),
+        toObject: () => ({}) as any,
       }
 
       const prismaInput = UserMapper.toPrisma(entity as any)

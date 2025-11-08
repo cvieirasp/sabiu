@@ -53,11 +53,17 @@ export interface LearningItemRow {
     id: string
     name: string
     color: string
-  } | null
+  }
   createdAt: Date
 }
 
-export type SortField = 'title' | 'status' | 'progressCached' | 'dueDate' | 'createdAt'
+export type SortField =
+  | 'title'
+  | 'status'
+  | 'progressCached'
+  | 'dueDate'
+  | 'createdAt'
+  | 'updatedAt'
 export type SortDirection = 'asc' | 'desc' | null
 
 export interface ItemsTableProps {
@@ -201,7 +207,7 @@ export function ItemsTable({
                 </TableCell>
               </TableRow>
             ) : (
-              items.map((item) => (
+              items.map(item => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">
                     <Link
@@ -228,17 +234,13 @@ export function ItemsTable({
                     </div>
                   </TableCell>
                   <TableCell>
-                    {item.category ? (
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="h-3 w-3 rounded-full"
-                          style={{ backgroundColor: item.category.color }}
-                        />
-                        <span className="text-sm">{item.category.name}</span>
-                      </div>
-                    ) : (
-                      <span className="text-sm text-muted-foreground">—</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-3 w-3 rounded-full"
+                        style={{ backgroundColor: item.category.color }}
+                      />
+                      <span className="text-sm">{item.category.name}</span>
+                    </div>
                   </TableCell>
                   <TableCell>
                     {item.dueDate ? (

@@ -219,8 +219,5 @@ export interface LearningItemRepository {
    * @param limit - Maximum number of items to return
    * @returns Array of recently updated learning items
    */
-  findRecentlyUpdated(
-    userId: string,
-    limit?: number
-  ): Promise<LearningItem[]>
+  findRecentlyUpdated(userId: string, limit?: number): Promise<LearningItem[]>
 }

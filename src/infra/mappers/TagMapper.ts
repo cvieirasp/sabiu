@@ -31,13 +31,13 @@ export class TagMapper {
    * Convert multiple Prisma models to Domain Entities
    */
   static toDomainMany(prismaModels: PrismaTag[]): Tag[] {
-    return prismaModels.map((model) => this.toDomain(model))
+    return prismaModels.map(model => this.toDomain(model))
   }
 
   /**
    * Convert multiple Domain Entities to Prisma inputs
    */
   static toPrismaMany(entities: Tag[]): PrismaTag[] {
-    return entities.map((entity) => this.toPrisma(entity))
+    return entities.map(entity => this.toPrisma(entity))
   }
 }

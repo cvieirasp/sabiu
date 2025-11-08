@@ -53,7 +53,10 @@ describe('LinkDependency', () => {
       create: async (dependency: Dependency) => dependency,
     } as Partial<DependencyRepository> as DependencyRepository
 
-    linkDependency = new LinkDependency(mockDependencyRepo, mockLearningItemRepo)
+    linkDependency = new LinkDependency(
+      mockDependencyRepo,
+      mockLearningItemRepo
+    )
   })
 
   describe('execute', () => {

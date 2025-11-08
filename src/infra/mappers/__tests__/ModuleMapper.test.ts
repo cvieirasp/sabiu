@@ -38,13 +38,22 @@ describe('ModuleMapper', () => {
         updatedAt: new Date(),
       }
 
-      const pendente = ModuleMapper.toDomain({ ...baseModel, status: 'Pendente' })
+      const pendente = ModuleMapper.toDomain({
+        ...baseModel,
+        status: 'Pendente',
+      })
       expect(pendente.status.isPendente()).toBe(true)
 
-      const emAndamento = ModuleMapper.toDomain({ ...baseModel, status: 'Em_Andamento' })
+      const emAndamento = ModuleMapper.toDomain({
+        ...baseModel,
+        status: 'Em_Andamento',
+      })
       expect(emAndamento.status.isEmAndamento()).toBe(true)
 
-      const concluido = ModuleMapper.toDomain({ ...baseModel, status: 'Concluido' })
+      const concluido = ModuleMapper.toDomain({
+        ...baseModel,
+        status: 'Concluido',
+      })
       expect(concluido.status.isConcluido()).toBe(true)
     })
 
@@ -85,7 +94,7 @@ describe('ModuleMapper', () => {
         isEmAndamento: () => false,
         isConcluido: () => false,
         equals: () => false,
-        toObject: () => ({} as any),
+        toObject: () => ({}) as any,
       }
 
       const prismaInput = ModuleMapper.toPrisma(entity as any)
@@ -109,13 +118,22 @@ describe('ModuleMapper', () => {
         createdAt: new Date(),
       }
 
-      const pendente = ModuleMapper.toPrisma({ ...baseEntity, status: ModuleStatusVO.fromPendente() } as any)
+      const pendente = ModuleMapper.toPrisma({
+        ...baseEntity,
+        status: ModuleStatusVO.fromPendente(),
+      } as any)
       expect(pendente.status).toBe('Pendente')
 
-      const emAndamento = ModuleMapper.toPrisma({ ...baseEntity, status: ModuleStatusVO.fromEmAndamento() } as any)
+      const emAndamento = ModuleMapper.toPrisma({
+        ...baseEntity,
+        status: ModuleStatusVO.fromEmAndamento(),
+      } as any)
       expect(emAndamento.status).toBe('Em_Andamento')
 
-      const concluido = ModuleMapper.toPrisma({ ...baseEntity, status: ModuleStatusVO.fromConcluido() } as any)
+      const concluido = ModuleMapper.toPrisma({
+        ...baseEntity,
+        status: ModuleStatusVO.fromConcluido(),
+      } as any)
       expect(concluido.status).toBe('Concluido')
     })
   })

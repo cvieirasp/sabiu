@@ -15,14 +15,14 @@ export interface CategoryOutput {
  * Retrieves list of all categories
  *
  * Business Rules:
-  * - Categories are ordered by name ascending by default
+ * - Categories are ordered by name ascending by default
  */
 export class ListCategories {
   constructor(private categoryRepository: CategoryRepository) {}
 
   async execute(): Promise<CategoryOutput[]> {
     const categories = await this.categoryRepository.findAll()
-    const categoryDTOs = categories.map((category) => ({
+    const categoryDTOs = categories.map(category => ({
       id: category.id,
       name: category.name,
       color: category.color,

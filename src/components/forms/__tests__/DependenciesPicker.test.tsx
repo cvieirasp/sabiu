@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { DependenciesPicker, type DependenciesPickerProps } from '../DependenciesPicker'
+import {
+  DependenciesPicker,
+  type DependenciesPickerProps,
+} from '../DependenciesPicker'
 
 describe('DependenciesPicker', () => {
   const mockAvailableItems = [
@@ -13,7 +16,11 @@ describe('DependenciesPicker', () => {
   const mockCurrentDependencies = [
     {
       id: 'dep-1',
-      targetItem: { id: 'item-4', title: 'JavaScript Essentials', status: 'Concluido' },
+      targetItem: {
+        id: 'item-4',
+        title: 'JavaScript Essentials',
+        status: 'Concluido',
+      },
     },
   ]
 
@@ -35,8 +42,12 @@ describe('DependenciesPicker', () => {
     it('should render dependencies picker with title', () => {
       render(<DependenciesPicker {...defaultProps} />)
 
-      expect(screen.getByText(/dependências \(pré-requisitos\)/i)).toBeInTheDocument()
-      expect(screen.getByText(/1 item necessário\(s\) antes deste/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/dependências \(pré-requisitos\)/i)
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(/1 item necessário\(s\) antes deste/i)
+      ).toBeInTheDocument()
     })
 
     it('should display current dependencies', () => {
@@ -49,7 +60,9 @@ describe('DependenciesPicker', () => {
     it('should show empty state when no dependencies', () => {
       render(<DependenciesPicker {...defaultProps} currentDependencies={[]} />)
 
-      expect(screen.getByText(/nenhum pré-requisito definido/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/nenhum pré-requisito definido/i)
+      ).toBeInTheDocument()
       expect(
         screen.getByText(/adicione itens que devem ser concluídos antes deste/i)
       ).toBeInTheDocument()
@@ -66,14 +79,18 @@ describe('DependenciesPicker', () => {
     it('should display loading state', () => {
       render(<DependenciesPicker {...defaultProps} isLoading={true} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar pré-requisito/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar pré-requisito/i,
+      })
       expect(addButton).toBeDisabled()
     })
 
     it('should disable all controls when disabled prop is true', () => {
       render(<DependenciesPicker {...defaultProps} disabled={true} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar pré-requisito/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar pré-requisito/i,
+      })
       expect(addButton).toBeDisabled()
     })
   })
@@ -85,7 +102,9 @@ describe('DependenciesPicker', () => {
         { id: 'current-item', title: 'Current Item', status: 'Backlog' },
       ]
 
-      render(<DependenciesPicker {...defaultProps} availableItems={itemsWithSelf} />)
+      render(
+        <DependenciesPicker {...defaultProps} availableItems={itemsWithSelf} />
+      )
 
       // Current item should not appear in the list
       // We can't easily test this without opening the popover
@@ -97,7 +116,12 @@ describe('DependenciesPicker', () => {
         { id: 'item-4', title: 'JavaScript Essentials', status: 'Concluido' },
       ]
 
-      render(<DependenciesPicker {...defaultProps} availableItems={itemsWithExisting} />)
+      render(
+        <DependenciesPicker
+          {...defaultProps}
+          availableItems={itemsWithExisting}
+        />
+      )
 
       // Already added item should not appear in the list
       // We can't easily test this without opening the popover
@@ -113,7 +137,7 @@ describe('DependenciesPicker', () => {
 
       // Find remove button (X icon button)
       const removeButtons = screen.getAllByRole('button')
-      const removeButton = removeButtons.find((btn) =>
+      const removeButton = removeButtons.find(btn =>
         btn.querySelector('.lucide-x')
       )
 
@@ -131,13 +155,13 @@ describe('DependenciesPicker', () => {
       const onRemove = vi
         .fn()
         .mockImplementation(
-          () => new Promise((resolve) => setTimeout(resolve, 100))
+          () => new Promise(resolve => setTimeout(resolve, 100))
         )
 
       render(<DependenciesPicker {...defaultProps} onRemove={onRemove} />)
 
       const removeButtons = screen.getAllByRole('button')
-      const removeButton = removeButtons.find((btn) =>
+      const removeButton = removeButtons.find(btn =>
         btn.querySelector('.lucide-x')
       )
 
@@ -146,7 +170,9 @@ describe('DependenciesPicker', () => {
 
         // Should show loader
         await waitFor(() => {
-          expect(removeButton.querySelector('.animate-spin')).toBeInTheDocument()
+          expect(
+            removeButton.querySelector('.animate-spin')
+          ).toBeInTheDocument()
         })
       }
     })
@@ -158,7 +184,7 @@ describe('DependenciesPicker', () => {
       render(<DependenciesPicker {...defaultProps} onRemove={onRemove} />)
 
       const removeButtons = screen.getAllByRole('button')
-      const removeButton = removeButtons.find((btn) =>
+      const removeButton = removeButtons.find(btn =>
         btn.querySelector('.lucide-x')
       )
 
@@ -193,7 +219,12 @@ describe('DependenciesPicker', () => {
         },
       ]
 
-      render(<DependenciesPicker {...defaultProps} currentDependencies={dependencies} />)
+      render(
+        <DependenciesPicker
+          {...defaultProps}
+          currentDependencies={dependencies}
+        />
+      )
 
       expect(screen.getByText('Concluído')).toBeInTheDocument()
       expect(screen.getByText('Em Andamento')).toBeInTheDocument()
@@ -204,9 +235,16 @@ describe('DependenciesPicker', () => {
 
   describe('Counts', () => {
     it('should display correct count for single dependency', () => {
-      render(<DependenciesPicker {...defaultProps} currentDependencies={mockCurrentDependencies} />)
+      render(
+        <DependenciesPicker
+          {...defaultProps}
+          currentDependencies={mockCurrentDependencies}
+        />
+      )
 
-      expect(screen.getByText(/1 item necessário\(s\) antes deste/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/1 item necessário\(s\) antes deste/i)
+      ).toBeInTheDocument()
     })
 
     it('should display correct count for multiple dependencies', () => {
@@ -214,19 +252,32 @@ describe('DependenciesPicker', () => {
         ...mockCurrentDependencies,
         {
           id: 'dep-2',
-          targetItem: { id: 'item-5', title: 'Another Item', status: 'Backlog' },
+          targetItem: {
+            id: 'item-5',
+            title: 'Another Item',
+            status: 'Backlog',
+          },
         },
       ]
 
-      render(<DependenciesPicker {...defaultProps} currentDependencies={multipleDeps} />)
+      render(
+        <DependenciesPicker
+          {...defaultProps}
+          currentDependencies={multipleDeps}
+        />
+      )
 
-      expect(screen.getByText(/2 itens necessário\(s\) antes deste/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/2 itens necessário\(s\) antes deste/i)
+      ).toBeInTheDocument()
     })
 
     it('should display zero when no dependencies', () => {
       render(<DependenciesPicker {...defaultProps} currentDependencies={[]} />)
 
-      expect(screen.getByText(/0 itens necessário\(s\) antes deste/i)).toBeInTheDocument()
+      expect(
+        screen.getByText(/0 itens necessário\(s\) antes deste/i)
+      ).toBeInTheDocument()
     })
   })
 
@@ -241,14 +292,18 @@ describe('DependenciesPicker', () => {
       )
 
       expect(
-        screen.getByText(/todos os itens disponíveis já foram adicionados como pré-requisitos/i)
+        screen.getByText(
+          /todos os itens disponíveis já foram adicionados como pré-requisitos/i
+        )
       ).toBeInTheDocument()
     })
 
     it('should disable add button when no available items', () => {
       render(<DependenciesPicker {...defaultProps} availableItems={[]} />)
 
-      const addButton = screen.getByRole('button', { name: /adicionar pré-requisito/i })
+      const addButton = screen.getByRole('button', {
+        name: /adicionar pré-requisito/i,
+      })
       expect(addButton).toBeDisabled()
     })
   })

@@ -2,10 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { CalculateProgress } from '../CalculateProgress'
 import { LearningItem } from '../../entities'
 import { StatusVO, Progress } from '../../value-objects'
-import type {
-  LearningItemRepository,
-  ModuleRepository,
-} from '../../interfaces'
+import type { LearningItemRepository, ModuleRepository } from '../../interfaces'
 
 describe('CalculateProgress', () => {
   let calculateProgress: CalculateProgress

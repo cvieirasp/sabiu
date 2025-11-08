@@ -81,7 +81,9 @@ describe('GET /api/items', () => {
     vi.mocked(prisma.learningItem.findMany).mockResolvedValue(mockItems)
     vi.mocked(prisma.learningItem.count).mockResolvedValue(2)
 
-    const request = new NextRequest('http://localhost:3000/api/items?page=1&limit=10')
+    const request = new NextRequest(
+      'http://localhost:3000/api/items?page=1&limit=10'
+    )
     const response = await GET(request)
 
     expect(response.status).toBe(200)

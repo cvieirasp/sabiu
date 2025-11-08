@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import type { LearningItem as PrismaLearningItem, Module as PrismaModule } from '@prisma/client'
+import type {
+  LearningItem as PrismaLearningItem,
+  Module as PrismaModule,
+} from '@prisma/client'
 import { LearningItemMapper } from '../LearningItemMapper'
 import { StatusVO, Progress } from '@/core/value-objects'
 
@@ -45,16 +48,28 @@ describe('LearningItemMapper', () => {
         updatedAt: new Date(),
       }
 
-      const backlog = LearningItemMapper.toDomain({ ...baseModel, status: 'Backlog' })
+      const backlog = LearningItemMapper.toDomain({
+        ...baseModel,
+        status: 'Backlog',
+      })
       expect(backlog.status.isBacklog()).toBe(true)
 
-      const emAndamento = LearningItemMapper.toDomain({ ...baseModel, status: 'Em_Andamento' })
+      const emAndamento = LearningItemMapper.toDomain({
+        ...baseModel,
+        status: 'Em_Andamento',
+      })
       expect(emAndamento.status.isEmAndamento()).toBe(true)
 
-      const pausado = LearningItemMapper.toDomain({ ...baseModel, status: 'Pausado' })
+      const pausado = LearningItemMapper.toDomain({
+        ...baseModel,
+        status: 'Pausado',
+      })
       expect(pausado.status.isPausado()).toBe(true)
 
-      const concluido = LearningItemMapper.toDomain({ ...baseModel, status: 'Concluido' })
+      const concluido = LearningItemMapper.toDomain({
+        ...baseModel,
+        status: 'Concluido',
+      })
       expect(concluido.status.isConcluido()).toBe(true)
     })
 
@@ -151,7 +166,7 @@ describe('LearningItemMapper', () => {
         isOverdue: () => false,
         isDueSoon: () => false,
         equals: () => false,
-        toObject: () => ({} as any),
+        toObject: () => ({}) as any,
       }
 
       const prismaInput = LearningItemMapper.toPrisma(entity as any)
@@ -182,16 +197,28 @@ describe('LearningItemMapper', () => {
         modules: [],
       }
 
-      const backlog = LearningItemMapper.toPrisma({ ...baseEntity, status: StatusVO.fromBacklog() } as any)
+      const backlog = LearningItemMapper.toPrisma({
+        ...baseEntity,
+        status: StatusVO.fromBacklog(),
+      } as any)
       expect(backlog.status).toBe('Backlog')
 
-      const emAndamento = LearningItemMapper.toPrisma({ ...baseEntity, status: StatusVO.fromEmAndamento() } as any)
+      const emAndamento = LearningItemMapper.toPrisma({
+        ...baseEntity,
+        status: StatusVO.fromEmAndamento(),
+      } as any)
       expect(emAndamento.status).toBe('Em_Andamento')
 
-      const pausado = LearningItemMapper.toPrisma({ ...baseEntity, status: StatusVO.fromPausado() } as any)
+      const pausado = LearningItemMapper.toPrisma({
+        ...baseEntity,
+        status: StatusVO.fromPausado(),
+      } as any)
       expect(pausado.status).toBe('Pausado')
 
-      const concluido = LearningItemMapper.toPrisma({ ...baseEntity, status: StatusVO.fromConcluido() } as any)
+      const concluido = LearningItemMapper.toPrisma({
+        ...baseEntity,
+        status: StatusVO.fromConcluido(),
+      } as any)
       expect(concluido.status).toBe('Concluido')
     })
   })

@@ -19,7 +19,7 @@ export interface LearningItemProps {
   status: StatusVO
   progress: Progress
   userId: string
-  categoryId: string | null
+  categoryId: string
   createdAt: Date
   updatedAt?: Date
 }
@@ -40,8 +40,8 @@ export class LearningItem {
     const now = new Date()
     return new LearningItem({
       ...props,
-      status: props.status || StatusVO.fromBacklog(),
-      progress: props.progress || Progress.fromZero(),
+      status: StatusVO.fromBacklog(),
+      progress: Progress.fromZero(),
       createdAt: now,
       updatedAt: props.updatedAt || now,
     })
@@ -109,7 +109,7 @@ export class LearningItem {
     return this.props.userId
   }
 
-  get categoryId(): string | null {
+  get categoryId(): string {
     return this.props.categoryId
   }
 
@@ -172,7 +172,7 @@ export class LearningItem {
     this.props.updatedAt = new Date()
   }
 
-  updateCategory(categoryId: string | null): void {
+  updateCategory(categoryId: string): void {
     this.props.categoryId = categoryId
     this.props.updatedAt = new Date()
   }
@@ -192,12 +192,12 @@ export class LearningItem {
   }
 
   removeModule(moduleId: string): void {
-    this._modules = this._modules.filter((m) => m.id !== moduleId)
+    this._modules = this._modules.filter(m => m.id !== moduleId)
     this.recalculateProgress()
   }
 
   updateModule(updatedModule: Module): void {
-    const index = this._modules.findIndex((m) => m.id === updatedModule.id)
+    const index = this._modules.findIndex(m => m.id === updatedModule.id)
     if (index === -1) {
       throw new Error('Module not found in this learning item')
     }
@@ -217,7 +217,7 @@ export class LearningItem {
       return
     }
 
-    const completedModules = this._modules.filter((m) =>
+    const completedModules = this._modules.filter(m =>
       m.status.isConcluido()
     ).length
 

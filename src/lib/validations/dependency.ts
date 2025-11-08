@@ -62,7 +62,10 @@ export type DependencyWithItemsOutput = z.infer<
  */
 export const listDependenciesQuerySchema = z.object({
   itemId: z.cuid('Invalid item ID format'),
-  type: z.enum(['prerequisites', 'dependents', 'all']).optional().default('all'),
+  type: z
+    .enum(['prerequisites', 'dependents', 'all'])
+    .optional()
+    .default('all'),
 })
 
 export type ListDependenciesQuery = z.infer<typeof listDependenciesQuerySchema>

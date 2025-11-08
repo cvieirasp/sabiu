@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
 import {
   createLearningItemSchema,
   listLearningItemsQuerySchema,
@@ -12,11 +11,9 @@ import {
   createCreatedResponse,
   createUnauthorizedError,
 } from '@/lib/api-errors'
-import { PrismaLearningItemRepository } from '@/infra/repositories'
-import { CreateLearningItem, ListLearningItems } from '@/core/use-cases'
-import { PrismaCategoryRepository } from '@/infra/repositories/PrismaCategoryRepository'
-import { PrismaModuleRepository } from '@/infra/repositories/PrismaModuleRepository'
 import { StatusVO } from '@/core/value-objects'
+import { makeCreateLearningItem } from '@/infra/factories/MakeCreateLearningItem'
+import { makeListLearningItems } from '@/infra/factories/MakeListLearningItems'
 
 /**
  * GET /api/items
@@ -56,9 +53,8 @@ export async function GET(request: NextRequest) {
       ? StatusVO.create(validatedParams.status)
       : undefined
 
-    // Initialize repository and use case
-    const learningItemRepository = new PrismaLearningItemRepository(prisma)
-    const listLearningItems = new ListLearningItems(learningItemRepository)
+    // Initialize use case
+    const listLearningItems = makeListLearningItems()
 
     // Execute use case
     const result = await listLearningItems.execute({
@@ -81,28 +77,21 @@ export async function GET(request: NextRequest) {
     })
 
     // Map domain entities to response DTOs
-    const items = result.learningItems.map((item) => ({
+    const items = result.learningItems.map(item => ({
       id: item.id,
       title: item.title,
       descriptionMD: item.descriptionMD,
       dueDate: item.dueDate,
-      status: item.status.value,
-      progress: item.progress.value,
+      status: item.status,
+      progress: item.progress,
       userId: item.userId,
-      categoryId: item.categoryId,
+      category: {
+        id: item.category.id,
+        name: item.category.name,
+        color: item.category.color,
+      },
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
-      modules: validatedParams.includeModules
-        ? item.modules.map((module) => ({
-            id: module.id,
-            learningItemId: module.learningItemId,
-            title: module.title,
-            status: module.status.value,
-            order: module.order,
-            createdAt: module.createdAt,
-            updatedAt: module.updatedAt,
-          }))
-        : undefined,
     }))
 
     return createSuccessResponse(items, {
@@ -124,7 +113,6 @@ export async function GET(request: NextRequest) {
  * - title: string (required)
  * - descriptionMD: string (optional)
  * - dueDate: ISO date string (optional)
- * - status: Status enum (optional, default: Backlog)
  * - categoryId: string (optional)
  * - modules: Array<{ title: string, order: number }> (optional)
  */
@@ -140,28 +128,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validatedData = createLearningItemSchema.parse(body)
 
-    // Convert status string to StatusVO if provided
-    const statusVO = validatedData.status
-      ? StatusVO.create(validatedData.status)
-      : StatusVO.fromBacklog()
-
-    // Initialize repositories and use case
-    const learningItemRepository = new PrismaLearningItemRepository(prisma)
-    const moduleRepository = new PrismaModuleRepository(prisma)
-    const categoryRepository = new PrismaCategoryRepository(prisma)
-
-    const createLearningItem = new CreateLearningItem(
-      learningItemRepository,
-      moduleRepository,
-      categoryRepository
-    )
+    // Initialize use case
+    const createLearningItem = makeCreateLearningItem()
 
     // Execute use case
     const result = await createLearningItem.execute({
       title: validatedData.title,
       descriptionMD: validatedData.descriptionMD,
       dueDate: validatedData.dueDate,
-      status: statusVO,
       userId: session.user.id,
       categoryId: validatedData.categoryId,
       modules: validatedData.modules,
@@ -179,7 +153,7 @@ export async function POST(request: NextRequest) {
       categoryId: result.learningItem.categoryId,
       createdAt: result.learningItem.createdAt,
       updatedAt: result.learningItem.updatedAt,
-      modules: result.modules.map((module) => ({
+      modules: result.modules.map(module => ({
         id: module.id,
         learningItemId: module.learningItemId,
         title: module.title,

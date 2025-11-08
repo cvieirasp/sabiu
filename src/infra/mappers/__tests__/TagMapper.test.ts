@@ -46,7 +46,7 @@ describe('TagMapper', () => {
         name: 'typescript',
         updateName: () => {},
         equals: () => false,
-        toObject: () => ({} as any),
+        toObject: () => ({}) as any,
       }
 
       const prismaInput = TagMapper.toPrisma(entity as any)

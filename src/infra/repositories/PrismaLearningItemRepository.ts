@@ -171,7 +171,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       const learningItems = await this.prisma.learningItem.findMany({
         where: {
           userId,
-          AND: tagIds.map((tagId) => ({
+          AND: tagIds.map(tagId => ({
             tags: {
               some: {
                 tagId,
@@ -434,7 +434,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       _count: true,
     })
 
-    return result.map((r) => ({
+    return result.map(r => ({
       categoryId: r.categoryId,
       count: r._count,
     }))

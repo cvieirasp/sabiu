@@ -41,7 +41,9 @@ describe('GET /api/items/[id]', () => {
   it('should return 401 if not authenticated', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
 
-    const request = new NextRequest(`http://localhost:3000/api/items/${VALID_ITEM_ID}`)
+    const request = new NextRequest(
+      `http://localhost:3000/api/items/${VALID_ITEM_ID}`
+    )
     const response = await GET(request, { params: { id: VALID_ITEM_ID } })
 
     expect(response.status).toBe(401)
@@ -58,7 +60,9 @@ describe('GET /api/items/[id]', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(null)
 
-    const request = new NextRequest(`http://localhost:3000/api/items/${VALID_ITEM_ID}`)
+    const request = new NextRequest(
+      `http://localhost:3000/api/items/${VALID_ITEM_ID}`
+    )
     const response = await GET(request, { params: { id: VALID_ITEM_ID } })
 
     expect(response.status).toBe(404)
@@ -87,7 +91,9 @@ describe('GET /api/items/[id]', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(mockItem)
 
-    const request = new NextRequest(`http://localhost:3000/api/items/${VALID_ITEM_ID}`)
+    const request = new NextRequest(
+      `http://localhost:3000/api/items/${VALID_ITEM_ID}`
+    )
     const response = await GET(request, { params: { id: VALID_ITEM_ID } })
 
     expect(response.status).toBe(200)
@@ -163,7 +169,9 @@ describe('GET /api/items/[id]', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(mockItem)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}')
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}'
+    )
     const response = await GET(request, { params: { id: VALID_ITEM_ID } })
 
     expect(response.status).toBe(400)
@@ -180,10 +188,13 @@ describe('PUT /api/items/[id]', () => {
   it('should return 401 if not authenticated', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'PUT',
-      body: JSON.stringify({ title: 'Updated Title' }),
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ title: 'Updated Title' }),
+      }
+    )
 
     const response = await PUT(request, { params: { id: VALID_ITEM_ID } })
 
@@ -219,14 +230,19 @@ describe('PUT /api/items/[id]', () => {
       updatedAt: new Date(),
     }
 
-    vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(mockExistingItem)
+    vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(
+      mockExistingItem
+    )
     vi.mocked(prisma.module.findMany).mockResolvedValue([])
     vi.mocked(prisma.learningItem.update).mockResolvedValue(mockUpdatedItem)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'PUT',
-      body: JSON.stringify({ title: 'Updated Title' }),
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ title: 'Updated Title' }),
+      }
+    )
 
     const response = await PUT(request, { params: { id: VALID_ITEM_ID } })
 
@@ -262,14 +278,19 @@ describe('PUT /api/items/[id]', () => {
       updatedAt: new Date(),
     }
 
-    vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(mockExistingItem)
+    vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(
+      mockExistingItem
+    )
     vi.mocked(prisma.module.findMany).mockResolvedValue([])
     vi.mocked(prisma.learningItem.update).mockResolvedValue(mockUpdatedItem)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'PUT',
-      body: JSON.stringify({ status: 'Em_Andamento' }),
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ status: 'Em_Andamento' }),
+      }
+    )
 
     const response = await PUT(request, { params: { id: VALID_ITEM_ID } })
 
@@ -301,10 +322,13 @@ describe('PUT /api/items/[id]', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(mockItem)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'PUT',
-      body: JSON.stringify({ title: 'Updated Title' }),
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'PUT',
+        body: JSON.stringify({ title: 'Updated Title' }),
+      }
+    )
 
     const response = await PUT(request, { params: { id: VALID_ITEM_ID } })
 
@@ -322,9 +346,12 @@ describe('DELETE /api/items/[id]', () => {
   it('should return 401 if not authenticated', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'DELETE',
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'DELETE',
+      }
+    )
 
     const response = await DELETE(request, { params: { id: VALID_ITEM_ID } })
 
@@ -357,9 +384,12 @@ describe('DELETE /api/items/[id]', () => {
     vi.mocked(prisma.dependency.deleteMany).mockResolvedValue({ count: 0 })
     vi.mocked(prisma.learningItem.delete).mockResolvedValue(mockItem)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'DELETE',
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'DELETE',
+      }
+    )
 
     const response = await DELETE(request, { params: { id: VALID_ITEM_ID } })
 
@@ -377,9 +407,12 @@ describe('DELETE /api/items/[id]', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(null)
 
-    const request = new NextRequest(`http://localhost:3000/api/items/${VALID_ITEM_ID}`, {
-      method: 'DELETE',
-    })
+    const request = new NextRequest(
+      `http://localhost:3000/api/items/${VALID_ITEM_ID}`,
+      {
+        method: 'DELETE',
+      }
+    )
 
     const response = await DELETE(request, { params: { id: VALID_ITEM_ID } })
 
@@ -409,9 +442,12 @@ describe('DELETE /api/items/[id]', () => {
 
     vi.mocked(prisma.learningItem.findUnique).mockResolvedValue(mockItem)
 
-    const request = new NextRequest('http://localhost:3000/api/items/${VALID_ITEM_ID}', {
-      method: 'DELETE',
-    })
+    const request = new NextRequest(
+      'http://localhost:3000/api/items/${VALID_ITEM_ID}',
+      {
+        method: 'DELETE',
+      }
+    )
 
     const response = await DELETE(request, { params: { id: VALID_ITEM_ID } })
 

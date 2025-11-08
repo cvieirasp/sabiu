@@ -1,6 +1,8 @@
-import { LearningItem } from '../entities'
 import { StatusVO } from '../value-objects'
-import { LearningItemRepository } from '../interfaces'
+import {
+  LearningItemDTO,
+  LearningItemQueryRepository,
+} from '@/core/interfaces/LearningItemQueryRepository'
 
 /**
  * Input DTO for ListLearningItems use case
@@ -23,7 +25,7 @@ export interface ListLearningItemsInput {
       | 'createdAt'
       | 'updatedAt'
       | 'dueDate'
-      | 'progress'
+      | 'progressCached'
       | 'status'
     order?: 'asc' | 'desc'
   }
@@ -34,7 +36,7 @@ export interface ListLearningItemsInput {
  * Output DTO for ListLearningItems use case
  */
 export interface ListLearningItemsOutput {
-  learningItems: LearningItem[]
+  learningItems: LearningItemDTO[]
   total: number
 }
 
@@ -50,7 +52,9 @@ export interface ListLearningItemsOutput {
  * - Optionally includes modules
  */
 export class ListLearningItems {
-  constructor(private learningItemRepository: LearningItemRepository) {}
+  constructor(
+    private learningItemQueryRepository: LearningItemQueryRepository
+  ) {}
 
   async execute(
     input: ListLearningItemsInput
@@ -59,30 +63,27 @@ export class ListLearningItems {
     const options = {
       skip: input.pagination?.skip,
       take: input.pagination?.take,
-      status: input.filters?.status,
-      categoryId: input.filters?.categoryId,
-      tagIds: input.filters?.tagIds,
-      search: input.filters?.search,
+      filters: {
+        status: input.filters?.status,
+        categoryId: input.filters?.categoryId,
+        tagIds: input.filters?.tagIds,
+        search: input.filters?.search,
+      },
       orderBy: input.sorting?.orderBy,
       order: input.sorting?.order,
       includeModules: input.includeModules ?? false,
     }
 
     // Fetch learning items
-    const learningItems = await this.learningItemRepository.findByUserId(
-      input.userId,
-      options
-    )
-
-    // Get total count with same filters
-    const total = await this.learningItemRepository.count(input.userId, {
-      status: input.filters?.status,
-      categoryId: input.filters?.categoryId,
-    })
+    const learningItemsData =
+      await this.learningItemQueryRepository.listLearningItems(
+        input.userId,
+        options
+      )
 
     return {
-      learningItems,
-      total,
+      learningItems: learningItemsData.learningItems,
+      total: learningItemsData.total,
     }
   }
 }

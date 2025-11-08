@@ -1,10 +1,13 @@
 import { LearningItem, Module } from '../entities'
-import { StatusVO, Progress } from '../value-objects'
+import { StatusVO, Progress, ModuleStatusVO } from '../value-objects'
 import {
   LearningItemRepository,
   ModuleRepository,
   CategoryRepository,
 } from '../interfaces'
+import { IdGenerator } from '@/core/interfaces/IdGenerator'
+
+import { ModuleStatus as PrismaModuleStatus } from '@prisma/client'
 
 /**
  * Input DTO for CreateLearningItem use case
@@ -13,13 +16,14 @@ export interface CreateLearningItemInput {
   title: string
   descriptionMD: string
   dueDate?: Date | null
-  status?: StatusVO
   userId: string
-  categoryId?: string | null
+  categoryId: string
   modules?: Array<{
     title: string
+    status?: PrismaModuleStatus
     order: number
   }>
+  dependencyIds?: string[]
 }
 
 /**
@@ -47,7 +51,8 @@ export class CreateLearningItem {
   constructor(
     private learningItemRepository: LearningItemRepository,
     private moduleRepository: ModuleRepository,
-    private categoryRepository: CategoryRepository
+    private categoryRepository: CategoryRepository,
+    private idGenerador: IdGenerator
   ) {}
 
   async execute(
@@ -65,14 +70,14 @@ export class CreateLearningItem {
 
     // Create learning item entity
     const learningItem = LearningItem.create({
-      id: this.generateId(),
+      id: this.idGenerador.generate(),
       title: input.title,
       descriptionMD: input.descriptionMD,
       dueDate: input.dueDate || null,
-      status: input.status || StatusVO.fromBacklog(),
+      status: StatusVO.fromBacklog(),
       progress: Progress.fromZero(),
       userId: input.userId,
-      categoryId: input.categoryId || null,
+      categoryId: input.categoryId,
     })
 
     // Save learning item
@@ -81,38 +86,23 @@ export class CreateLearningItem {
     // Create modules if provided
     const createdModules: Module[] = []
     if (input.modules && input.modules.length > 0) {
-      const modules = input.modules.map((moduleData) =>
+      const modules = input.modules.map(moduleData =>
         Module.create({
-          id: this.generateId(),
+          id: this.idGenerador.generate(),
           learningItemId: createdItem.id,
           title: moduleData.title,
+          status: ModuleStatusVO.fromPendente(),
           order: moduleData.order,
         })
       )
 
       const savedModules = await this.moduleRepository.createMany(modules)
       createdModules.push(...savedModules)
-
-      // Set modules on the learning item to recalculate progress
-      createdItem.setModules(savedModules)
-
-      // Update progress if needed
-      if (createdItem.progress.value > 0) {
-        await this.learningItemRepository.updateProgress(
-          createdItem.id,
-          createdItem.progress.value
-        )
-      }
     }
 
     return {
       learningItem: createdItem,
       modules: createdModules,
     }
-  }
-
-  private generateId(): string {
-    // This will be replaced with actual ID generation (e.g., cuid)
-    return `temp_${Date.now()}_${Math.random().toString(36).substring(7)}`
   }
 }

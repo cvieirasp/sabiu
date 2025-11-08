@@ -83,7 +83,7 @@ export async function GET(
 
     // Get item details for each dependency
     const prerequisiteData = await Promise.all(
-      prerequisites.map(async (dep) => {
+      prerequisites.map(async dep => {
         const targetItem = await itemRepository.findById(dep.targetItemId)
         return {
           id: dep.id,
@@ -102,7 +102,7 @@ export async function GET(
     )
 
     const dependentData = await Promise.all(
-      dependents.map(async (dep) => {
+      dependents.map(async dep => {
         const sourceItem = await itemRepository.findById(dep.sourceItemId)
         return {
           id: dep.id,
@@ -164,7 +164,11 @@ export async function POST(
     const sourceItem = await itemRepository.findById(sourceItemId)
 
     if (!sourceItem) {
-      throw new ApiError('Source learning item not found', ApiErrorCode.NOT_FOUND, 404)
+      throw new ApiError(
+        'Source learning item not found',
+        ApiErrorCode.NOT_FOUND,
+        404
+      )
     }
 
     if (sourceItem.userId !== session.user.id) {
@@ -187,7 +191,7 @@ export async function POST(
 
       // Verify all target items exist and belong to user
       const targetItems = await Promise.all(
-        validated.targetItemIds.map((id) => itemRepository.findById(id))
+        validated.targetItemIds.map(id => itemRepository.findById(id))
       )
 
       for (let i = 0; i < targetItems.length; i++) {
@@ -252,21 +256,18 @@ export async function POST(
       }
 
       // Create all dependencies
-      const created = await dependencyRepository.createMany(
-        dependenciesToCreate
-      )
+      const created =
+        await dependencyRepository.createMany(dependenciesToCreate)
 
-      return createCreatedResponse(
-        {
-          dependencies: created.map((dep) => ({
-            id: dep.id,
-            sourceItemId: dep.sourceItemId,
-            targetItemId: dep.targetItemId,
-            createdAt: dep.createdAt,
-          })),
-          count: created.length,
-        },
-      )
+      return createCreatedResponse({
+        dependencies: created.map(dep => ({
+          id: dep.id,
+          sourceItemId: dep.sourceItemId,
+          targetItemId: dep.targetItemId,
+          createdAt: dep.createdAt,
+        })),
+        count: created.length,
+      })
     } else {
       // Single dependency
       const validated = createDependencySchema.parse({
@@ -278,7 +279,11 @@ export async function POST(
       const targetItem = await itemRepository.findById(validated.targetItemId)
 
       if (!targetItem) {
-        throw new ApiError('Target learning item not found', ApiErrorCode.NOT_FOUND, 404)
+        throw new ApiError(
+          'Target learning item not found',
+          ApiErrorCode.NOT_FOUND,
+          404
+        )
       }
 
       if (targetItem.userId !== session.user.id) {
@@ -325,16 +330,14 @@ export async function POST(
       // Save to database
       const created = await dependencyRepository.create(dependency)
 
-      return createCreatedResponse(
-        {
-          dependency: {
-            id: created.id,
-            sourceItemId: created.sourceItemId,
-            targetItemId: created.targetItemId,
-            createdAt: created.createdAt,
-          },
-        }
-      )
+      return createCreatedResponse({
+        dependency: {
+          id: created.id,
+          sourceItemId: created.sourceItemId,
+          targetItemId: created.targetItemId,
+          createdAt: created.createdAt,
+        },
+      })
     }
   } catch (error) {
     return handleApiError(error)

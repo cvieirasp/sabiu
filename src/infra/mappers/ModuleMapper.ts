@@ -33,7 +33,9 @@ export class ModuleMapper {
   /**
    * Convert Domain Entity to Prisma input (for create/update)
    */
-  static toPrisma(entity: Module): Omit<PrismaModule, 'createdAt' | 'updatedAt'> {
+  static toPrisma(
+    entity: Module
+  ): Omit<PrismaModule, 'createdAt' | 'updatedAt'> {
     // Map ModuleStatusVO to Prisma enum
     const statusMap = {
       Pendente: 'Pendente' as const,
@@ -54,13 +56,15 @@ export class ModuleMapper {
    * Convert multiple Prisma models to Domain Entities
    */
   static toDomainMany(prismaModels: PrismaModule[]): Module[] {
-    return prismaModels.map((model) => this.toDomain(model))
+    return prismaModels.map(model => this.toDomain(model))
   }
 
   /**
    * Convert multiple Domain Entities to Prisma inputs
    */
-  static toPrismaMany(entities: Module[]): Omit<PrismaModule, 'createdAt' | 'updatedAt'>[] {
-    return entities.map((entity) => this.toPrisma(entity))
+  static toPrismaMany(
+    entities: Module[]
+  ): Omit<PrismaModule, 'createdAt' | 'updatedAt'>[] {
+    return entities.map(entity => this.toPrisma(entity))
   }
 }

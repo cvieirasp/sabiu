@@ -13,7 +13,6 @@ export interface CategoryProps {
 }
 
 export class Category {
-
   private constructor(private props: CategoryProps) {
     this.validate()
   }

@@ -51,19 +51,19 @@ describe('ListLearningItems', () => {
 
         // Filter by status
         if (options?.status) {
-          items = items.filter((item) => item.status.equals(options.status))
+          items = items.filter(item => item.status.equals(options.status))
         }
 
         // Filter by category
         if (options?.categoryId) {
-          items = items.filter((item) => item.categoryId === options.categoryId)
+          items = items.filter(item => item.categoryId === options.categoryId)
         }
 
         // Search
         if (options?.search) {
           const searchLower = options.search.toLowerCase()
           items = items.filter(
-            (item) =>
+            item =>
               item.title.toLowerCase().includes(searchLower) ||
               item.descriptionMD.toLowerCase().includes(searchLower)
           )
@@ -80,11 +80,15 @@ describe('ListLearningItems', () => {
         let count = mockItems.length
 
         if (filters?.status) {
-          count = mockItems.filter((item) => item.status.equals(filters.status)).length
+          count = mockItems.filter(item =>
+            item.status.equals(filters.status)
+          ).length
         }
 
         if (filters?.categoryId) {
-          count = mockItems.filter((item) => item.categoryId === filters.categoryId).length
+          count = mockItems.filter(
+            item => item.categoryId === filters.categoryId
+          ).length
         }
 
         return count

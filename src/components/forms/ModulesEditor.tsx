@@ -32,13 +32,6 @@ import { ModuleStatus as PrismaModuleStatus } from '@prisma/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -46,8 +39,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
 
 export interface ModuleData {
@@ -68,7 +59,6 @@ interface SortableModuleItemProps {
   module: ModuleData
   onEdit: (module: ModuleData) => void
   onDelete: (moduleId: string) => void
-  onStatusChange: (moduleId: string, status: PrismaModuleStatus) => void
   disabled?: boolean
 }
 
@@ -76,7 +66,6 @@ function SortableModuleItem({
   module,
   onEdit,
   onDelete,
-  onStatusChange,
   disabled,
 }: SortableModuleItemProps) {
   const {
@@ -93,18 +82,6 @@ function SortableModuleItem({
     transition,
   }
 
-  const statusLabels = {
-    [PrismaModuleStatus.Pendente]: 'Pendente',
-    [PrismaModuleStatus.Em_Andamento]: 'Em Andamento',
-    [PrismaModuleStatus.Concluido]: 'Concluído',
-  }
-
-  const statusColors = {
-    [PrismaModuleStatus.Pendente]: 'secondary',
-    [PrismaModuleStatus.Em_Andamento]: 'default',
-    [PrismaModuleStatus.Concluido]: 'default',
-  } as const
-
   return (
     <div
       ref={setNodeRef}
@@ -118,6 +95,7 @@ function SortableModuleItem({
         className="cursor-grab active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-50"
         {...attributes}
         {...listeners}
+        type="button"
         disabled={disabled}
       >
         <GripVertical className="h-5 w-5 text-muted-foreground" />
@@ -127,41 +105,22 @@ function SortableModuleItem({
         <p className="font-medium">{module.title}</p>
       </div>
 
-      <Select
-        value={module.status}
-        onValueChange={(value) =>
-          onStatusChange(module.id, value as PrismaModuleStatus)
-        }
-        disabled={disabled}
-      >
-        <SelectTrigger className="w-[140px]">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {Object.values(PrismaModuleStatus).map((status) => (
-            <SelectItem key={status} value={status}>
-              {statusLabels[status]}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Badge variant={statusColors[module.status]}>
-        {statusLabels[module.status]}
-      </Badge>
-
       <Button
         variant="ghost"
         size="icon"
+        className="cursor-pointer"
+        type="button"
         onClick={() => onEdit(module)}
         disabled={disabled}
       >
-        <Edit2 className="h-4 w-4" />
+        <Edit2 className="h-4 w-4 text-accent" />
       </Button>
 
       <Button
         variant="ghost"
         size="icon"
+        className="cursor-pointer"
+        type="button"
         onClick={() => onDelete(module.id)}
         disabled={disabled}
       >
@@ -191,22 +150,12 @@ export function ModulesEditor({
     })
   )
 
-  const calculateProgress = (modules: ModuleData[]) => {
-    if (modules.length === 0) return 0
-    const completed = modules.filter(
-      (m) => m.status === PrismaModuleStatus.Concluido
-    ).length
-    return Math.round((completed / modules.length) * 100)
-  }
-
-  const progress = calculateProgress(modules)
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      const oldIndex = modules.findIndex((m) => m.id === active.id)
-      const newIndex = modules.findIndex((m) => m.id === over.id)
+      const oldIndex = modules.findIndex(m => m.id === active.id)
+      const newIndex = modules.findIndex(m => m.id === over.id)
 
       const reorderedModules = arrayMove(modules, oldIndex, newIndex).map(
         (module, index) => ({
@@ -256,7 +205,7 @@ export function ModulesEditor({
       return
     }
 
-    const updatedModules = modules.map((m) =>
+    const updatedModules = modules.map(m =>
       m.id === editingModule.id ? { ...m, title: editTitle.trim() } : m
     )
 
@@ -270,18 +219,11 @@ export function ModulesEditor({
     if (!deleteModuleId) return
 
     const filteredModules = modules
-      .filter((m) => m.id !== deleteModuleId)
+      .filter(m => m.id !== deleteModuleId)
       .map((m, index) => ({ ...m, order: index }))
 
     onModulesChange(filteredModules)
     setDeleteModuleId(null)
-  }
-
-  const handleStatusChange = (moduleId: string, status: PrismaModuleStatus) => {
-    const updatedModules = modules.map((m) =>
-      m.id === moduleId ? { ...m, status } : m
-    )
-    onModulesChange(updatedModules)
   }
 
   const isDisabled = disabled || isLoading
@@ -296,26 +238,21 @@ export function ModulesEditor({
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-medium">{progress}% concluído</p>
-            <Progress value={progress} className="w-32" />
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsAdding(true)}
-            disabled={isDisabled}
-          >
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Plus className="mr-2 h-4 w-4" />
-            )}
-            Adicionar Módulo
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="cursor-pointer"
+          type="button"
+          onClick={() => setIsAdding(true)}
+          disabled={isDisabled}
+        >
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Plus className="mr-2 h-4 w-4" />
+          )}
+          Adicionar Módulo
+        </Button>
       </div>
 
       {isAdding && (
@@ -323,8 +260,8 @@ export function ModulesEditor({
           <Input
             placeholder="Título do módulo"
             value={newModuleTitle}
-            onChange={(e) => setNewModuleTitle(e.target.value)}
-            onKeyDown={(e) => {
+            onChange={e => setNewModuleTitle(e.target.value)}
+            onKeyDown={e => {
               if (e.key === 'Enter') handleAddModule()
               if (e.key === 'Escape') {
                 setIsAdding(false)
@@ -337,7 +274,9 @@ export function ModulesEditor({
           <Button
             size="icon"
             variant="default"
+            className="cursor-pointer"
             onClick={handleAddModule}
+            type="button"
             disabled={isDisabled}
           >
             <Check className="h-4 w-4" />
@@ -345,6 +284,8 @@ export function ModulesEditor({
           <Button
             size="icon"
             variant="ghost"
+            className="cursor-pointer"
+            type="button"
             onClick={() => {
               setIsAdding(false)
               setNewModuleTitle('')
@@ -374,20 +315,19 @@ export function ModulesEditor({
           onDragEnd={handleDragEnd}
         >
           <SortableContext
-            items={modules.map((m) => m.id)}
+            items={modules.map(m => m.id)}
             strategy={verticalListSortingStrategy}
           >
             <div className="space-y-2">
-              {modules.map((module) => (
+              {modules.map(module => (
                 <SortableModuleItem
                   key={module.id}
                   module={module}
-                  onEdit={(m) => {
+                  onEdit={m => {
                     setEditingModule(m)
                     setEditTitle(m.title)
                   }}
                   onDelete={setDeleteModuleId}
-                  onStatusChange={handleStatusChange}
                   disabled={isDisabled}
                 />
               ))}
@@ -397,7 +337,10 @@ export function ModulesEditor({
       )}
 
       {/* Edit Dialog */}
-      <Dialog open={!!editingModule} onOpenChange={() => setEditingModule(null)}>
+      <Dialog
+        open={!!editingModule}
+        onOpenChange={() => setEditingModule(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Módulo</DialogTitle>
@@ -407,24 +350,38 @@ export function ModulesEditor({
           </DialogHeader>
           <Input
             value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-            onKeyDown={(e) => {
+            onChange={e => setEditTitle(e.target.value)}
+            onKeyDown={e => {
               if (e.key === 'Enter') handleEditModule()
             }}
             placeholder="Título do módulo"
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditingModule(null)}>
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              type="button"
+              onClick={() => setEditingModule(null)}
+            >
               Cancelar
             </Button>
-            <Button onClick={handleEditModule}>Salvar</Button>
+            <Button
+              className="cursor-pointer"
+              type="button"
+              onClick={handleEditModule}
+            >
+              Salvar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={!!deleteModuleId} onOpenChange={() => setDeleteModuleId(null)}>
+      <Dialog
+        open={!!deleteModuleId}
+        onOpenChange={() => setDeleteModuleId(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Remover Módulo</DialogTitle>
@@ -434,10 +391,20 @@ export function ModulesEditor({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteModuleId(null)}>
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              type="button"
+              onClick={() => setDeleteModuleId(null)}
+            >
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDeleteModule}>
+            <Button
+              variant="destructive"
+              className="cursor-pointer"
+              type="button"
+              onClick={handleDeleteModule}
+            >
               Remover
             </Button>
           </DialogFooter>

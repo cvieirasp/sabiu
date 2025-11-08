@@ -1,7 +1,4 @@
-import {
-  LearningItemRepository,
-  DependencyRepository,
-} from '../interfaces'
+import { LearningItemRepository, DependencyRepository } from '../interfaces'
 
 /**
  * Input DTO for DeleteLearningItem use case

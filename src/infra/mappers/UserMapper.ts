@@ -38,13 +38,15 @@ export class UserMapper {
    * Convert multiple Prisma models to Domain Entities
    */
   static toDomainMany(prismaModels: PrismaUser[]): User[] {
-    return prismaModels.map((model) => this.toDomain(model))
+    return prismaModels.map(model => this.toDomain(model))
   }
 
   /**
    * Convert multiple Domain Entities to Prisma inputs
    */
-  static toPrismaMany(entities: User[]): Omit<PrismaUser, 'createdAt' | 'updatedAt'>[] {
-    return entities.map((entity) => this.toPrisma(entity))
+  static toPrismaMany(
+    entities: User[]
+  ): Omit<PrismaUser, 'createdAt' | 'updatedAt'>[] {
+    return entities.map(entity => this.toPrisma(entity))
   }
 }

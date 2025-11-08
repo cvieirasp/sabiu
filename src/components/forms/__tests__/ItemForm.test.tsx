@@ -17,8 +17,8 @@ describe('ItemForm', () => {
   ]
 
   const defaultProps: ItemFormProps = {
-    categories: mockCategories,
     tags: mockTags,
+    availableItems: [],
     onSubmit: vi.fn(),
     isLoading: false,
     submitLabel: 'Salvar',
@@ -26,6 +26,11 @@ describe('ItemForm', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    // Mock fetch for categories
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ data: mockCategories }),
+    })
   })
 
   it('should render all form fields', () => {
@@ -35,7 +40,6 @@ describe('ItemForm', () => {
     expect(screen.getByLabelText(/descrição/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/categoria/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/prazo/i)).toBeInTheDocument()
-    expect(screen.getByLabelText(/status/i)).toBeInTheDocument()
     //expect(screen.getByLabelText(/tags/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /salvar/i })).toBeInTheDocument()
   })
@@ -69,8 +73,9 @@ describe('ItemForm', () => {
         expect.objectContaining({
           title: 'Aprender TypeScript',
           descriptionMD: '',
-          status: Status.Backlog,
           tagIds: [],
+          modules: [],
+          dependencyIds: [],
         })
       )
     })
@@ -80,9 +85,10 @@ describe('ItemForm', () => {
     const initialValues = {
       title: 'Curso de React',
       descriptionMD: '# Descrição\nConteúdo do curso',
-      status: Status.Em_Andamento,
       categoryId: 'cat-1',
       tagIds: ['tag-1', 'tag-2'],
+      modules: [],
+      dependencyIds: [],
     }
 
     render(<ItemForm {...defaultProps} initialValues={initialValues} />)
@@ -196,7 +202,7 @@ describe('ItemForm', () => {
     const onSubmit = vi
       .fn()
       .mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100))
+        () => new Promise(resolve => setTimeout(resolve, 100))
       )
 
     render(<ItemForm {...defaultProps} onSubmit={onSubmit} />)

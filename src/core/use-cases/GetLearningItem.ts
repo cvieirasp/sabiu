@@ -1,5 +1,4 @@
-import { LearningItem } from '../entities'
-import { LearningItemRepository } from '../interfaces'
+import { LearningItemQueryRepository } from '@/core/interfaces/LearningItemQueryRepository'
 
 /**
  * Input DTO for GetLearningItem use case
@@ -14,7 +13,20 @@ export interface GetLearningItemInput {
  * Output DTO for GetLearningItem use case
  */
 export interface GetLearningItemOutput {
-  learningItem: LearningItem
+  id: string
+  title: string
+  descriptionMD: string
+  dueDate: Date | null
+  status: string
+  progress: number
+  userId: string
+  category: {
+    id: string
+    name: string
+    color: string
+  }
+  createdAt: Date
+  updatedAt: Date | null
 }
 
 /**
@@ -28,13 +40,13 @@ export interface GetLearningItemOutput {
  * - Modules can be optionally included
  */
 export class GetLearningItem {
-  constructor(private learningItemRepository: LearningItemRepository) {}
+  constructor(
+    private learningItemQueryRepository: LearningItemQueryRepository,
+  ) {}
 
-  async execute(
-    input: GetLearningItemInput
-  ): Promise<GetLearningItemOutput> {
+  async execute(input: GetLearningItemInput): Promise<GetLearningItemOutput> {
     // Find learning item by ID
-    const learningItem = await this.learningItemRepository.findById(
+    const learningItem = await this.learningItemQueryRepository.findById(
       input.id,
       input.includeModules ?? false
     )
@@ -48,8 +60,20 @@ export class GetLearningItem {
       throw new Error('User does not own this learning item')
     }
 
-    return {
-      learningItem,
+    // Map to output DTO
+    const learningItemOutput: GetLearningItemOutput = {
+      id: learningItem.id,
+      title: learningItem.title,
+      descriptionMD: learningItem.descriptionMD,
+      dueDate: learningItem.dueDate,
+      status: learningItem.status,
+      progress: learningItem.progress,
+      userId: learningItem.userId,
+      category: learningItem.category,
+      createdAt: learningItem.createdAt,
+      updatedAt: learningItem.updatedAt,
     }
+
+    return learningItemOutput
   }
 }

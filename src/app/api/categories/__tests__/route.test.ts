@@ -23,7 +23,6 @@ vi.mock('@/core/use-cases/ListCategories', () => ({
 }))
 
 describe('/api/categories', () => {
-
   function mockSession() {
     vi.mocked(getServerSession).mockResolvedValue({
       user: { id: 'user-1' },
@@ -101,7 +100,7 @@ describe('/api/categories', () => {
       expect(data.data).toEqual([])
     })
 
-    it ('should call the use case to fetch categories', async () => {
+    it('should call the use case to fetch categories', async () => {
       const executeSpy = vi.fn().mockResolvedValue([])
       mockSession()
 
@@ -110,7 +109,7 @@ describe('/api/categories', () => {
       } as unknown as ListCategories)
 
       const request = new NextRequest('http://localhost:3000/api/categories')
-      const response = await GET(request) 
+      const response = await GET(request)
       expect(response.status).toBe(200)
       expect(executeSpy).toHaveBeenCalledTimes(1)
     })

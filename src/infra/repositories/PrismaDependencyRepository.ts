@@ -84,7 +84,7 @@ export class PrismaDependencyRepository implements DependencyRepository {
     const created = await this.prisma.dependency.findMany({
       where: {
         id: {
-          in: dependencies.map((d) => d.id),
+          in: dependencies.map(d => d.id),
         },
       },
     })

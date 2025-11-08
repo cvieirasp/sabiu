@@ -46,7 +46,7 @@ describe('DependencyMapper', () => {
         wouldCreateCircularDependency: () => false,
         equals: () => false,
         isSameRelationship: () => false,
-        toObject: () => ({} as any),
+        toObject: () => ({}) as any,
       }
 
       const prismaInput = DependencyMapper.toPrisma(entity as any)

@@ -97,33 +97,36 @@ describe('GET /api/items/[id]/dependencies', () => {
       expires: '',
     })
 
-    vi.mocked(prisma.learningItem.findUnique).mockImplementation((args) => {
-      const result = (args?.where?.id === MOCK_ITEM_ID)
-        ? {
-          id: MOCK_ITEM_ID,
-          userId: MOCK_USER_ID,
-          title: 'Test Item',
-          descriptionMD: '',
-          dueDate: null,
-          status: Status.Backlog,
-          categoryId: null,
-          progressCached: 0,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-        : {
-          id: args?.where?.id as string,
-          userId: MOCK_USER_ID,
-          title: 'Target Item',
-          descriptionMD: '',
-          dueDate: null,
-          status: Status.Concluido,
-          categoryId: null,
-          progressCached: 100,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }
-      return Promise.resolve(result) as unknown as Prisma.Prisma__LearningItemClient<typeof result>;
+    vi.mocked(prisma.learningItem.findUnique).mockImplementation(args => {
+      const result =
+        args?.where?.id === MOCK_ITEM_ID
+          ? {
+              id: MOCK_ITEM_ID,
+              userId: MOCK_USER_ID,
+              title: 'Test Item',
+              descriptionMD: '',
+              dueDate: null,
+              status: Status.Backlog,
+              categoryId: null,
+              progressCached: 0,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+          : {
+              id: args?.where?.id as string,
+              userId: MOCK_USER_ID,
+              title: 'Target Item',
+              descriptionMD: '',
+              dueDate: null,
+              status: Status.Concluido,
+              categoryId: null,
+              progressCached: 100,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            }
+      return Promise.resolve(
+        result
+      ) as unknown as Prisma.Prisma__LearningItemClient<typeof result>
     })
 
     vi.mocked(prisma.dependency.findMany).mockResolvedValue([

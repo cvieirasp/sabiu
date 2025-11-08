@@ -59,13 +59,13 @@ export function DependenciesPicker({
   const [error, setError] = useState<string | null>(null)
 
   // Filter available items (exclude current dependencies and self)
-  const filteredAvailableItems = availableItems.filter((item) => {
+  const filteredAvailableItems = availableItems.filter(item => {
     // Exclude self
     if (item.id === itemId) return false
 
     // Exclude already added dependencies
     const isAlreadyAdded = currentDependencies.some(
-      (dep) => dep.targetItem.id === item.id
+      dep => dep.targetItem.id === item.id
     )
     if (isAlreadyAdded) return false
 
@@ -78,9 +78,9 @@ export function DependenciesPicker({
   })
 
   const handleToggleItem = (itemId: string) => {
-    setSelectedItems((prev) =>
+    setSelectedItems(prev =>
       prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
+        ? prev.filter(id => id !== itemId)
         : [...prev, itemId]
     )
   }
@@ -153,7 +153,9 @@ export function DependenciesPicker({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold">Dependências (Pré-requisitos)</h3>
+          <h3 className="text-sm font-semibold">
+            Dependências (Pré-requisitos)
+          </h3>
           <p className="text-xs text-muted-foreground">
             {currentDependencies.length}{' '}
             {currentDependencies.length === 1 ? 'item' : 'itens'} necessário(s)
@@ -185,7 +187,7 @@ export function DependenciesPicker({
               />
               <CommandEmpty>Nenhum item encontrado.</CommandEmpty>
               <CommandGroup className="max-h-64 overflow-auto">
-                {filteredAvailableItems.map((item) => (
+                {filteredAvailableItems.map(item => (
                   <CommandItem
                     key={item.id}
                     onSelect={() => handleToggleItem(item.id)}
@@ -248,7 +250,7 @@ export function DependenciesPicker({
         </div>
       ) : (
         <div className="space-y-2">
-          {currentDependencies.map((dependency) => (
+          {currentDependencies.map(dependency => (
             <div
               key={dependency.id}
               className="flex items-center gap-3 rounded-md border bg-card p-3"
@@ -272,9 +274,7 @@ export function DependenciesPicker({
                 variant="ghost"
                 size="icon"
                 onClick={() => handleRemoveDependency(dependency.id)}
-                disabled={
-                  isDisabled || removingId === dependency.id
-                }
+                disabled={isDisabled || removingId === dependency.id}
               >
                 {removingId === dependency.id ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

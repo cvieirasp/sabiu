@@ -1,4 +1,7 @@
-import { PrismaClient, ModuleStatus as PrismaModuleStatus } from '@prisma/client'
+import {
+  PrismaClient,
+  ModuleStatus as PrismaModuleStatus,
+} from '@prisma/client'
 import { Module } from '@/core/entities'
 import { ModuleStatusVO } from '@/core/value-objects'
 import { ModuleRepository } from '@/core/interfaces'
@@ -76,7 +79,7 @@ export class PrismaModuleRepository implements ModuleRepository {
     const created = await this.prisma.module.findMany({
       where: {
         id: {
-          in: modules.map((m) => m.id),
+          in: modules.map(m => m.id),
         },
       },
       orderBy: { order: 'asc' },
@@ -103,7 +106,7 @@ export class PrismaModuleRepository implements ModuleRepository {
   async updateMany(modules: Module[]): Promise<Module[]> {
     // Use transaction for atomic updates
     const updated = await this.prisma.$transaction(
-      modules.map((module) => {
+      modules.map(module => {
         const data = ModuleMapper.toPrisma(module)
         return this.prisma.module.update({
           where: { id: module.id },

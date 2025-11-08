@@ -52,7 +52,7 @@ describe('CategoryMapper', () => {
         updateName: () => {},
         updateColor: () => {},
         equals: () => false,
-        toObject: () => ({} as any),
+        toObject: () => ({}) as any,
       }
 
       const prismaInput = CategoryMapper.toPrisma(entity as any)

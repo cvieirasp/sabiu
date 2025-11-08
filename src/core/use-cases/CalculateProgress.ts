@@ -52,15 +52,14 @@ export class CalculateProgress {
     }
 
     // Count total and completed modules
-    const totalModules = await this.moduleRepository.count(
-      input.learningItemId
-    )
+    const totalModules = await this.moduleRepository.count(input.learningItemId)
     const completedModules = await this.moduleRepository.countCompleted(
       input.learningItemId
     )
 
     // Calculate progress
-    const progress = totalModules === 0 ? 0 : (completedModules / totalModules) * 100
+    const progress =
+      totalModules === 0 ? 0 : (completedModules / totalModules) * 100
 
     // Update progress in repository
     await this.learningItemRepository.updateProgress(

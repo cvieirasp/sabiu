@@ -1,8 +1,5 @@
 import { Dependency } from '../entities'
-import {
-  DependencyRepository,
-  LearningItemRepository,
-} from '../interfaces'
+import { DependencyRepository, LearningItemRepository } from '../interfaces'
 
 /**
  * Input DTO for LinkDependency use case
@@ -38,9 +35,7 @@ export class LinkDependency {
     private learningItemRepository: LearningItemRepository
   ) {}
 
-  async execute(
-    input: LinkDependencyInput
-  ): Promise<LinkDependencyOutput> {
+  async execute(input: LinkDependencyInput): Promise<LinkDependencyOutput> {
     // Validate that items are different
     if (input.sourceItemId === input.targetItemId) {
       throw new Error('Cannot create dependency to self')
@@ -52,7 +47,9 @@ export class LinkDependency {
     )
 
     if (!sourceItem) {
-      throw new Error(`Source learning item with ID ${input.sourceItemId} not found`)
+      throw new Error(
+        `Source learning item with ID ${input.sourceItemId} not found`
+      )
     }
 
     // Verify ownership of source
@@ -66,7 +63,9 @@ export class LinkDependency {
     )
 
     if (!targetItem) {
-      throw new Error(`Target learning item with ID ${input.targetItemId} not found`)
+      throw new Error(
+        `Target learning item with ID ${input.targetItemId} not found`
+      )
     }
 
     // Verify ownership of target
@@ -75,10 +74,11 @@ export class LinkDependency {
     }
 
     // Check if dependency already exists
-    const existingDependency = await this.dependencyRepository.findBySourceAndTarget(
-      input.sourceItemId,
-      input.targetItemId
-    )
+    const existingDependency =
+      await this.dependencyRepository.findBySourceAndTarget(
+        input.sourceItemId,
+        input.targetItemId
+      )
 
     if (existingDependency) {
       throw new Error('Dependency already exists between these learning items')
@@ -91,7 +91,9 @@ export class LinkDependency {
     )
 
     if (wouldCreateCycle) {
-      throw new Error('Cannot create dependency: would create circular dependency')
+      throw new Error(
+        'Cannot create dependency: would create circular dependency'
+      )
     }
 
     // Create dependency entity

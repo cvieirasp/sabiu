@@ -140,7 +140,9 @@ describe('GetLearningItem', () => {
       const result = await getLearningItem.execute(input)
 
       expect(result.learningItem.title).toBe('Learn TypeScript')
-      expect(result.learningItem.descriptionMD).toBe('Complete TypeScript course')
+      expect(result.learningItem.descriptionMD).toBe(
+        'Complete TypeScript course'
+      )
       expect(result.learningItem.userId).toBe('user-123')
       expect(result.learningItem.status.isBacklog()).toBe(true)
       expect(result.learningItem.progress.value).toBe(0)

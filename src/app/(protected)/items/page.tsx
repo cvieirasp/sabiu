@@ -99,29 +99,29 @@ async function fetchItems(params: {
 
   return {
     success: result.success,
-    data: result.data.map((item: {
-      id: string
-      title: string
-      status: string
-      progress: number
-      dueDate: string | null
-      categoryId: string | null
-      createdAt: string
-    }) => ({
-      id: item.id,
-      title: item.title,
-      status: item.status,
-      progressCached: item.progress,
-      dueDate: item.dueDate ? new Date(item.dueDate) : null,
-      category: item.categoryId
-        ? {
-            id: item.categoryId,
-            name: 'Category', // TODO: Fetch category name
-            color: '#3B82F6',
-          }
-        : null,
-      createdAt: new Date(item.createdAt),
-    })),
+    data: result.data.map(
+      (item: {
+        id: string
+        title: string
+        status: string
+        progress: number
+        dueDate: string | null
+        category: {
+          id: string
+          name: string
+          color: string
+        }
+        createdAt: string
+      }) => ({
+        id: item.id,
+        title: item.title,
+        status: item.status,
+        progressCached: item.progress,
+        dueDate: item.dueDate ? new Date(item.dueDate) : null,
+        category: item.category,
+        createdAt: new Date(item.createdAt),
+      })
+    ),
     meta: result.meta,
   }
 }
@@ -196,7 +196,7 @@ export default function ItemsPage() {
   const handleSort = (field: SortField) => {
     if (sortField === field) {
       // Toggle direction
-      setSortDirection((prev) => {
+      setSortDirection(prev => {
         if (prev === 'asc') return 'desc'
         if (prev === 'desc') return null
         return 'asc'
@@ -258,8 +258,9 @@ export default function ItemsPage() {
         title: values.title,
         descriptionMD: values.descriptionMD,
         dueDate: values.dueDate?.toISOString(),
-        status: values.status,
         categoryId: values.categoryId,
+        modules: values.modules,
+        dependencyIds: values.dependencyIds,
       }),
     })
 
@@ -286,7 +287,7 @@ export default function ItemsPage() {
             Gerencie seus cursos, vídeos, livros e certificações
           </p>
         </div>
-        <Button onClick={handleNewItem}>
+        <Button className="cursor-pointer" onClick={handleNewItem}>
           <Plus className="mr-2 h-4 w-4" />
           Novo Item
         </Button>
@@ -301,8 +302,8 @@ export default function ItemsPage() {
             <Input
               placeholder="Buscar por título ou descrição..."
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => {
+              onChange={e => setSearchInput(e.target.value)}
+              onKeyDown={e => {
                 if (e.key === 'Enter') {
                   handleSearch()
                 }
@@ -318,7 +319,11 @@ export default function ItemsPage() {
               </button>
             )}
           </div>
-          <Button onClick={handleSearch} variant="secondary">
+          <Button
+            className="cursor-pointer"
+            onClick={handleSearch}
+            variant="secondary"
+          >
             Buscar
           </Button>
         </div>
@@ -329,7 +334,7 @@ export default function ItemsPage() {
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
-            {STATUS_OPTIONS.map((option) => (
+            {STATUS_OPTIONS.map(option => (
               <SelectItem key={option.value} value={option.value}>
                 {option.label}
               </SelectItem>
@@ -344,11 +349,12 @@ export default function ItemsPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todas as categorias</SelectItem>
-            {categoriesData && categoriesData.map((category) => (
-              <SelectItem key={category.id} value={category.id}>
-                {category.name}
-              </SelectItem>
-            ))}
+            {categoriesData &&
+              categoriesData.map(category => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.name}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
@@ -389,7 +395,7 @@ export default function ItemsPage() {
           <p className="text-sm text-muted-foreground mb-6">
             Comece criando seu primeiro item de aprendizado
           </p>
-          <Button onClick={handleNewItem}>
+          <Button className="cursor-pointer" onClick={handleNewItem}>
             <Plus className="mr-2 h-4 w-4" />
             Criar Primeiro Item
           </Button>
@@ -406,7 +412,7 @@ export default function ItemsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
             >
               Anterior
@@ -414,7 +420,7 @@ export default function ItemsPage() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
               Próxima
@@ -425,17 +431,14 @@ export default function ItemsPage() {
 
       {/* Create Item Modal */}
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Criar Novo Item de Aprendizado</DialogTitle>
             <DialogDescription>
               Preencha os detalhes do seu novo item de aprendizado
             </DialogDescription>
           </DialogHeader>
-          <ItemForm
-            onSubmit={handleCreateItem}
-            submitLabel="Criar Item"
-          />
+          <ItemForm onSubmit={handleCreateItem} submitLabel="Criar Item" />
         </DialogContent>
       </Dialog>
     </div>

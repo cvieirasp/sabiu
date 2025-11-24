@@ -1,5 +1,5 @@
 import type { Category as PrismaCategory } from '@prisma/client'
-import { Category } from '@/core/entities'
+import { Category } from '@/core/entities/Category'
 
 /**
  * Category Mapper

@@ -71,14 +71,9 @@ export class PrismaCategoryRepository implements CategoryRepository {
     return CategoryMapper.toDomain(updated)
   }
 
-  async delete(id: string): Promise<boolean> {
-    try {
-      await this.prisma.category.delete({
-        where: { id },
-      })
-      return true
-    } catch {
-      return false
-    }
+  async delete(id: string): Promise<void> {
+    await this.prisma.category.delete({
+      where: { id },
+    })
   }
 }

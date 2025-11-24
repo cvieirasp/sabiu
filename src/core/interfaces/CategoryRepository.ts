@@ -47,7 +47,6 @@ export interface CategoryRepository {
   /**
    * Delete a category by ID
    * @param id - Category unique identifier
-   * @returns True if deleted, false otherwise
    */
-  delete(id: string): Promise<boolean>
+  delete(id: string): Promise<void>
 }

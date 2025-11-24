@@ -1,4 +1,4 @@
-import { Category } from '../entities'
+import { Category } from '@/core/entities/Category'
 
 /**
  * Category Repository Interface
@@ -50,25 +50,4 @@ export interface CategoryRepository {
    * @returns True if deleted, false otherwise
    */
   delete(id: string): Promise<boolean>
-
-  /**
-   * Check if category name already exists
-   * @param name - Category name to check
-   * @param excludeCategoryId - Optional category ID to exclude from check
-   * @returns True if name exists, false otherwise
-   */
-  nameExists(name: string, excludeCategoryId?: string): Promise<boolean>
-
-  /**
-   * Count total categories
-   * @returns Total number of categories
-   */
-  count(): Promise<number>
-
-  /**
-   * Count learning items by category
-   * @param categoryId - Category unique identifier
-   * @returns Number of learning items in this category
-   */
-  countItems(categoryId: string): Promise<number>
 }

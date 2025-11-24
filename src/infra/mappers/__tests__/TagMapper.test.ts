@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Tag as PrismaTag } from '@prisma/client'
 import { TagMapper } from '@/infra/mappers/TagMapper'
-import { Tag } from '@/core'
+import { Tag } from '@/core/entities/Tag'
 
 describe('TagMapper', () => {
   describe('toDomain', () => {

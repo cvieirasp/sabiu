@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { Dependency } from '@/core/entities'
-import { DependencyRepository } from '@/core/interfaces'
-import { DependencyMapper } from '../mappers'
+import { Dependency } from '@/core/entities/Dependency'
+import { DependencyRepository } from '@/core/interfaces/DependencyRepository'
+import { DependencyMapper } from '@/infra/mappers/DependencyMapper'
 
 /**
  * Prisma implementation of DependencyRepository

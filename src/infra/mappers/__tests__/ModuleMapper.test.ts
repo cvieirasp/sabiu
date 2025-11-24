@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import type { Module as PrismaModule } from '@prisma/client'
 import { ModuleMapper } from '@/infra/mappers/ModuleMapper'
 import { ModuleStatusVO } from '@/core/value-objects'
-import { Module } from '@/core'
+import { Module } from '@/core/entities/Module'
 
 describe('ModuleMapper', () => {
   describe('toDomain', () => {

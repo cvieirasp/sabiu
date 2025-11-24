@@ -1,11 +1,11 @@
-import { PrismaClient, Status as PrismaStatus } from '@prisma/client'
+import { Prisma, PrismaClient, Status as PrismaStatus } from '@prisma/client'
 import { StatusVO } from '@/core/value-objects'
 import {
   LearningItemQueryRepository,
   ListLearningItemParams,
   LearningItemDTO,
 } from '@/core/interfaces/LearningItemQueryRepository'
-import { LearningItemMapper } from '../mappers'
+import { LearningItemMapper } from '@/infra/mappers/LearningItemMapper'
 
 export class PrismaLearningItemQueryRepository
   implements LearningItemQueryRepository
@@ -20,7 +20,7 @@ export class PrismaLearningItemQueryRepository
     const pageSize = params.pageSize ?? 10
 
     // Build where clause based on filters
-    const whereClause: any = {
+    const whereClause: Prisma.LearningItemWhereInput = {
       userId,
     }
 
@@ -34,20 +34,20 @@ export class PrismaLearningItemQueryRepository
       if (params.filters.tagIds && params.filters.tagIds.length > 0) {
         whereClause.tags = {
           some: {
-            id: { in: params.filters.tagIds },
+            tagId: { in: params.filters.tagIds },
           },
         }
       }
       if (params.filters.search) {
         whereClause.OR = [
           {
-            name: {
+            title: {
               contains: params.filters.search,
-              mode: 'insensitive', // case-insensitive
+              mode: 'insensitive',
             },
           },
           {
-            description: {
+            descriptionMD: {
               contains: params.filters.search,
               mode: 'insensitive',
             },
@@ -57,11 +57,11 @@ export class PrismaLearningItemQueryRepository
     }
 
     // Build orderBy clause
-    const orderByClause: any = {}
+    const orderByClause: Prisma.LearningItemOrderByWithRelationInput = {}
     if (params.orderBy) {
       orderByClause[params.orderBy] = params.order ?? 'desc'
     } else {
-      orderByClause['createdAt'] = 'desc' // Default ordering
+      orderByClause['createdAt'] = 'desc'
     }
 
     // Fetch total count for pagination

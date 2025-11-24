@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Category as PrismaCategory } from '@prisma/client'
 import { CategoryMapper } from '@/infra/mappers/CategoryMapper'
-import { Category } from '@/core'
+import { Category } from '@/core/entities/Category'
 
 describe('CategoryMapper', () => {
   describe('toDomain', () => {

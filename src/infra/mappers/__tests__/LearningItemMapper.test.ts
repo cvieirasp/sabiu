@@ -5,7 +5,7 @@ import type {
 } from '@prisma/client'
 import { LearningItemMapper } from '@/infra/mappers/LearningItemMapper'
 import { StatusVO, Progress } from '@/core/value-objects'
-import { LearningItem } from '@/core'
+import { LearningItem } from '@/core/entities/LearningItem'
 
 describe('LearningItemMapper', () => {
   describe('toDomain', () => {

@@ -2,10 +2,10 @@ import {
   PrismaClient,
   ModuleStatus as PrismaModuleStatus,
 } from '@prisma/client'
-import { Module } from '@/core/entities'
+import { Module } from '@/core/entities/Module'
 import { ModuleStatusVO } from '@/core/value-objects'
-import { ModuleRepository } from '@/core/interfaces'
-import { ModuleMapper } from '../mappers'
+import { ModuleRepository } from '@/core/interfaces/ModuleRepository'
+import { ModuleMapper } from '@/infra/mappers/ModuleMapper'
 
 /**
  * Prisma implementation of ModuleRepository

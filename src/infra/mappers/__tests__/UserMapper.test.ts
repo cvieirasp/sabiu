@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import type { User as PrismaUser } from '@prisma/client'
 import { UserMapper } from '@/infra/mappers/UserMapper'
 import { Email } from '@/core/value-objects'
-import { User } from '@/core'
+import { User } from '@/core/entities/User'
 
 describe('UserMapper', () => {
   describe('toDomain', () => {

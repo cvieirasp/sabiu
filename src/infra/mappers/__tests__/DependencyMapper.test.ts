@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Dependency as PrismaDependency } from '@prisma/client'
 import { DependencyMapper } from '@/infra/mappers/DependencyMapper'
-import { Dependency } from '@/core'
+import { Dependency } from '@/core/entities/Dependency'
 
 describe('DependencyMapper', () => {
   describe('toDomain', () => {

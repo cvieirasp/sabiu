@@ -1,8 +1,8 @@
-import { PrismaClient, Status as PrismaStatus } from '@prisma/client'
-import { LearningItem } from '@/core/entities'
+import { Prisma, PrismaClient, Status as PrismaStatus } from '@prisma/client'
+import { LearningItem } from '@/core/entities/LearningItem'
 import { StatusVO } from '@/core/value-objects'
-import { LearningItemRepository } from '@/core/interfaces'
-import { LearningItemMapper } from '../mappers'
+import { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
+import { LearningItemMapper } from '@/infra/mappers/LearningItemMapper'
 
 /**
  * Prisma implementation of LearningItemRepository
@@ -50,7 +50,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       includeModules?: boolean
     }
   ): Promise<LearningItem[]> {
-    const where: any = { userId }
+    const where: Prisma.LearningItemWhereInput = { userId }
 
     // Apply filters
     if (options?.status) {
@@ -79,7 +79,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
     }
 
     // Build orderBy
-    let orderBy: any = { createdAt: 'desc' }
+    let orderBy: Prisma.LearningItemOrderByWithRelationInput = { createdAt: 'desc' }
     if (options?.orderBy) {
       const orderByField =
         options.orderBy === 'progress' ? 'progressCached' : options.orderBy
@@ -109,7 +109,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       includeModules?: boolean
     }
   ): Promise<LearningItem[]> {
-    const where: any = {
+    const where: Prisma.LearningItemWhereInput = {
       userId,
       status: this.statusToPrisma(status),
     }
@@ -139,7 +139,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       includeModules?: boolean
     }
   ): Promise<LearningItem[]> {
-    const where: any = {
+    const where: Prisma.LearningItemWhereInput = {
       userId,
       categoryId,
     }
@@ -296,7 +296,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       limit?: number
     }
   ): Promise<LearningItem[]> {
-    const where: any = {
+    const where: Prisma.LearningItemWhereInput = {
       userId,
       OR: [
         { title: { contains: query, mode: 'insensitive' } },
@@ -388,7 +388,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       categoryId?: string
     }
   ): Promise<number> {
-    const where: any = { userId }
+    const where: Prisma.LearningItemWhereInput = { userId }
 
     if (filters?.status) {
       where.status = this.statusToPrisma(filters.status)
@@ -447,7 +447,7 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
       categoryId?: string
     }
   ): Promise<number> {
-    const where: any = { userId }
+    const where: Prisma.LearningItemWhereInput = { userId }
 
     if (filters?.status) {
       where.status = this.statusToPrisma(filters.status)

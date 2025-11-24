@@ -1,6 +1,0 @@
-export type { UserRepository } from './UserRepository'
-export type { CategoryRepository } from './CategoryRepository'
-export type { TagRepository } from './TagRepository'
-export type { ModuleRepository } from './ModuleRepository'
-export type { DependencyRepository } from './DependencyRepository'
-export type { LearningItemRepository } from './LearningItemRepository'

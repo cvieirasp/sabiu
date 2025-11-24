@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { Category } from '@/core/entities'
-import { CategoryRepository } from '@/core/interfaces'
-import { CategoryMapper } from '../mappers'
+import { Category } from '@/core/entities/Category'
+import { CategoryRepository } from '@/core/interfaces/CategoryRepository'
+import { CategoryMapper } from '@/infra/mappers/CategoryMapper'
 
 /**
  * Prisma implementation of CategoryRepository
@@ -80,31 +80,5 @@ export class PrismaCategoryRepository implements CategoryRepository {
     } catch {
       return false
     }
-  }
-
-  async nameExists(name: string, excludeCategoryId?: string): Promise<boolean> {
-    const category = await this.prisma.category.findUnique({
-      where: { name },
-    })
-
-    if (!category) {
-      return false
-    }
-
-    if (excludeCategoryId && category.id === excludeCategoryId) {
-      return false
-    }
-
-    return true
-  }
-
-  async count(): Promise<number> {
-    return this.prisma.category.count()
-  }
-
-  async countItems(categoryId: string): Promise<number> {
-    return this.prisma.learningItem.count({
-      where: { categoryId },
-    })
   }
 }

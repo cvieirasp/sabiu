@@ -4,7 +4,6 @@ import { Category } from '@/core/entities/Category'
 import { PrismaCategoryRepository } from '@/infra/repositories/PrismaCategoryRepository'
 import { CategoryMapper } from "@/infra/mappers/CategoryMapper"
 
-// Helper: cria um mock mínimo do PrismaClient só com o que usamos
 function makePrismaMock() {
   return {
     category: {
@@ -26,13 +25,11 @@ describe("PrismaCategoryRepository", () => {
     name: 'E-Learning',
     color: '#3B82F6',
   }
-
   const prismaCategoryYoutube = {
     id: 'cat-2',
     name: 'YouTube',
     color: '#FF5733',
   }
-
   const prismaCategoryBook = {
     id: 'cat-3',
     name: 'Book',
@@ -44,13 +41,11 @@ describe("PrismaCategoryRepository", () => {
     name: 'E-Learning',
     color: '#3B82F6',
   } as Category
-
   const entityCategoryYoutube = {
     id: 'cat-2',
     name: 'YouTube',
     color: '#FF5733',
   } as Category
-
   const entityCategoryBook = {
     id: 'cat-3',
     name: 'Book',

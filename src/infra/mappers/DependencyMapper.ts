@@ -1,5 +1,5 @@
 import type { Dependency as PrismaDependency } from '@prisma/client'
-import { Dependency } from '@/core/entities'
+import { Dependency } from '@/core/entities/Dependency'
 
 /**
  * Dependency Mapper

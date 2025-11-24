@@ -37,32 +37,6 @@ export class PrismaDependencyRepository implements DependencyRepository {
     return DependencyMapper.toDomainMany(dependencies)
   }
 
-  async findBySourceAndTarget(
-    sourceItemId: string,
-    targetItemId: string
-  ): Promise<Dependency | null> {
-    const dependency = await this.prisma.dependency.findFirst({
-      where: {
-        sourceItemId,
-        targetItemId,
-      },
-    })
-
-    if (!dependency) {
-      return null
-    }
-
-    return DependencyMapper.toDomain(dependency)
-  }
-
-  async getPrerequisites(itemId: string): Promise<Dependency[]> {
-    return this.findBySourceItemId(itemId)
-  }
-
-  async getDependents(itemId: string): Promise<Dependency[]> {
-    return this.findByTargetItemId(itemId)
-  }
-
   async create(dependency: Dependency): Promise<Dependency> {
     const data = DependencyMapper.toPrisma(dependency)
 
@@ -73,52 +47,18 @@ export class PrismaDependencyRepository implements DependencyRepository {
     return DependencyMapper.toDomain(created)
   }
 
-  async createMany(dependencies: Dependency[]): Promise<Dependency[]> {
-    const data = DependencyMapper.toPrismaMany(dependencies)
-
-    await this.prisma.dependency.createMany({
-      data,
-    })
-
-    // Fetch created dependencies
-    const created = await this.prisma.dependency.findMany({
-      where: {
-        id: {
-          in: dependencies.map(d => d.id),
-        },
-      },
-    })
-
-    return DependencyMapper.toDomainMany(created)
-  }
-
-  async delete(id: string): Promise<boolean> {
-    try {
-      await this.prisma.dependency.delete({
+  async delete(id: string): Promise<void> {
+    await this.prisma.dependency.delete({
         where: { id },
       })
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  async deleteByItemId(itemId: string): Promise<number> {
-    const result = await this.prisma.dependency.deleteMany({
-      where: {
-        OR: [{ sourceItemId: itemId }, { targetItemId: itemId }],
-      },
-    })
-
-    return result.count
   }
 
   async exists(sourceItemId: string, targetItemId: string): Promise<boolean> {
-    const dependency = await this.findBySourceAndTarget(
-      sourceItemId,
-      targetItemId
-    )
-    return dependency !== null
+    const dependencies = await this.prisma.dependency.findMany({
+      where: { sourceItemId, targetItemId },
+    })
+
+    return dependencies.length > 0
   }
 
   async wouldCreateCycle(
@@ -160,33 +100,5 @@ export class PrismaDependencyRepository implements DependencyRepository {
     }
 
     return false
-  }
-
-  async getDependencyGraph(itemIds: string[]): Promise<Dependency[]> {
-    const dependencies = await this.prisma.dependency.findMany({
-      where: {
-        AND: [
-          { sourceItemId: { in: itemIds } },
-          { targetItemId: { in: itemIds } },
-        ],
-      },
-    })
-
-    return DependencyMapper.toDomainMany(dependencies)
-  }
-
-  async count(
-    itemId: string,
-    type: 'prerequisites' | 'dependents'
-  ): Promise<number> {
-    if (type === 'prerequisites') {
-      return this.prisma.dependency.count({
-        where: { sourceItemId: itemId },
-      })
-    } else {
-      return this.prisma.dependency.count({
-        where: { targetItemId: itemId },
-      })
-    }
   }
 }

@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import type { Module as PrismaModule } from '@prisma/client'
-import { ModuleMapper } from '../ModuleMapper'
+import { ModuleMapper } from '@/infra/mappers/ModuleMapper'
 import { ModuleStatusVO } from '@/core/value-objects'
+import { Module } from '@/core'
 
 describe('ModuleMapper', () => {
   describe('toDomain', () => {
@@ -84,20 +85,9 @@ describe('ModuleMapper', () => {
         order: 1,
         createdAt: new Date('2025-01-01'),
         updatedAt: new Date('2025-01-02'),
-        updateTitle: () => {},
-        updateStatus: () => {},
-        updateOrder: () => {},
-        markAsPendente: () => {},
-        markAsEmAndamento: () => {},
-        markAsConcluido: () => {},
-        isPendente: () => true,
-        isEmAndamento: () => false,
-        isConcluido: () => false,
-        equals: () => false,
-        toObject: () => ({}) as any,
       }
 
-      const prismaInput = ModuleMapper.toPrisma(entity as any)
+      const prismaInput = ModuleMapper.toPrisma(entity as Module)
 
       expect(prismaInput.id).toBe('mod-123')
       expect(prismaInput.learningItemId).toBe('item-123')
@@ -121,19 +111,19 @@ describe('ModuleMapper', () => {
       const pendente = ModuleMapper.toPrisma({
         ...baseEntity,
         status: ModuleStatusVO.fromPendente(),
-      } as any)
+      } as Module)
       expect(pendente.status).toBe('Pendente')
 
       const emAndamento = ModuleMapper.toPrisma({
         ...baseEntity,
         status: ModuleStatusVO.fromEmAndamento(),
-      } as any)
+      } as Module)
       expect(emAndamento.status).toBe('Em_Andamento')
 
       const concluido = ModuleMapper.toPrisma({
         ...baseEntity,
         status: ModuleStatusVO.fromConcluido(),
-      } as any)
+      } as Module)
       expect(concluido.status).toBe('Concluido')
     })
   })
@@ -179,6 +169,50 @@ describe('ModuleMapper', () => {
       expect(entities[0].status.isPendente()).toBe(true)
       expect(entities[1].status.isEmAndamento()).toBe(true)
       expect(entities[2].status.isConcluido()).toBe(true)
+    })
+
+    it('should convert multiple domain entities to Prisma inputs', () => {
+      const entities = [
+        {
+          id: 'mod-1',
+          learningItemId: 'item-123',
+          title: 'Module 1',
+          status: ModuleStatusVO.fromPendente(),
+          order: 1,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'mod-2',
+          learningItemId: 'item-123',
+          title: 'Module 2',
+          status: ModuleStatusVO.fromEmAndamento(),
+          order: 2,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'mod-3',
+          learningItemId: 'item-123',
+          title: 'Module 3',
+          status: ModuleStatusVO.fromConcluido(),
+          order: 3,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]
+
+      const prismaInputs = entities.map(entity =>
+        ModuleMapper.toPrisma(entity as Module)
+      )
+
+      expect(prismaInputs).toHaveLength(3)
+      expect(prismaInputs[0].title).toBe('Module 1')
+      expect(prismaInputs[1].title).toBe('Module 2')
+      expect(prismaInputs[2].title).toBe('Module 3')
+      expect(prismaInputs[0].status).toBe('Pendente')
+      expect(prismaInputs[1].status).toBe('Em_Andamento')
+      expect(prismaInputs[2].status).toBe('Concluido')
     })
   })
 })

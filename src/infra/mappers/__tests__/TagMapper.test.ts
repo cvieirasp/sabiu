@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Tag as PrismaTag } from '@prisma/client'
-import { TagMapper } from '../TagMapper'
+import { TagMapper } from '@/infra/mappers/TagMapper'
+import { Tag } from '@/core'
 
 describe('TagMapper', () => {
   describe('toDomain', () => {
@@ -44,12 +45,9 @@ describe('TagMapper', () => {
       const entity = {
         id: 'tag-123',
         name: 'typescript',
-        updateName: () => {},
-        equals: () => false,
-        toObject: () => ({}) as any,
       }
 
-      const prismaInput = TagMapper.toPrisma(entity as any)
+      const prismaInput = TagMapper.toPrisma(entity as Tag)
 
       expect(prismaInput.id).toBe('tag-123')
       expect(prismaInput.name).toBe('typescript')
@@ -61,7 +59,7 @@ describe('TagMapper', () => {
         name: 'web-development',
       }
 
-      const prismaInput = TagMapper.toPrisma(entity as any)
+      const prismaInput = TagMapper.toPrisma(entity as Tag)
 
       expect(prismaInput.name).toBe('web-development')
     })
@@ -92,7 +90,7 @@ describe('TagMapper', () => {
         { id: 'tag-3', name: 'nodejs' },
       ]
 
-      const prismaInputs = TagMapper.toPrismaMany(entities as any)
+      const prismaInputs = TagMapper.toPrismaMany(entities as Tag[])
 
       expect(prismaInputs).toHaveLength(3)
       expect(prismaInputs[0].name).toBe('typescript')

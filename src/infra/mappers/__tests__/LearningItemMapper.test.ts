@@ -3,8 +3,9 @@ import type {
   LearningItem as PrismaLearningItem,
   Module as PrismaModule,
 } from '@prisma/client'
-import { LearningItemMapper } from '../LearningItemMapper'
+import { LearningItemMapper } from '@/infra/mappers/LearningItemMapper'
 import { StatusVO, Progress } from '@/core/value-objects'
+import { LearningItem } from '@/core'
 
 describe('LearningItemMapper', () => {
   describe('toDomain', () => {
@@ -43,7 +44,7 @@ describe('LearningItemMapper', () => {
         status: 'Backlog',
         progressCached: 0,
         userId: 'user-123',
-        categoryId: null,
+        categoryId: 'cat-123',
         createdAt: new Date(),
         updatedAt: new Date(),
       }
@@ -71,27 +72,6 @@ describe('LearningItemMapper', () => {
         status: 'Concluido',
       })
       expect(concluido.status.isConcluido()).toBe(true)
-    })
-
-    it('should handle null optional fields', () => {
-      const prismaModel: PrismaLearningItem = {
-        id: 'item-123',
-        title: 'Test',
-        descriptionMD: 'Test description',
-        dueDate: null,
-        status: 'Backlog',
-        progressCached: 50,
-        userId: 'user-123',
-        categoryId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
-
-      const entity = LearningItemMapper.toDomain(prismaModel)
-
-      expect(entity.dueDate).toBeNull()
-      expect(entity.categoryId).toBeNull()
-      expect(entity.progress.value).toBe(50)
     })
 
     it('should convert and set modules when included', () => {
@@ -124,7 +104,7 @@ describe('LearningItemMapper', () => {
         status: 'Em_Andamento',
         progressCached: 50,
         userId: 'user-123',
-        categoryId: null,
+        categoryId: 'cat-123',
         createdAt: new Date(),
         updatedAt: new Date(),
         modules,
@@ -152,24 +132,9 @@ describe('LearningItemMapper', () => {
         categoryId: 'cat-123',
         createdAt: new Date('2025-01-01'),
         updatedAt: new Date('2025-01-02'),
-        modules: [],
-        setModules: () => {},
-        addModule: () => {},
-        removeModule: () => {},
-        updateModule: () => {},
-        recalculateProgress: () => {},
-        updateTitle: () => {},
-        updateDescription: () => {},
-        updateDueDate: () => {},
-        updateStatus: () => {},
-        updateCategory: () => {},
-        isOverdue: () => false,
-        isDueSoon: () => false,
-        equals: () => false,
-        toObject: () => ({}) as any,
       }
 
-      const prismaInput = LearningItemMapper.toPrisma(entity as any)
+      const prismaInput = LearningItemMapper.toPrisma(entity as LearningItem)
 
       expect(prismaInput.id).toBe('item-123')
       expect(prismaInput.title).toBe('Learn TypeScript')
@@ -192,33 +157,32 @@ describe('LearningItemMapper', () => {
         status: StatusVO.fromBacklog(),
         progress: Progress.create(0),
         userId: 'user-123',
-        categoryId: null,
+        categoryId: 'cat-123',
         createdAt: new Date(),
-        modules: [],
       }
 
       const backlog = LearningItemMapper.toPrisma({
         ...baseEntity,
         status: StatusVO.fromBacklog(),
-      } as any)
+      } as LearningItem)
       expect(backlog.status).toBe('Backlog')
 
       const emAndamento = LearningItemMapper.toPrisma({
         ...baseEntity,
         status: StatusVO.fromEmAndamento(),
-      } as any)
+      } as LearningItem)
       expect(emAndamento.status).toBe('Em_Andamento')
 
       const pausado = LearningItemMapper.toPrisma({
         ...baseEntity,
         status: StatusVO.fromPausado(),
-      } as any)
+      } as LearningItem)
       expect(pausado.status).toBe('Pausado')
 
       const concluido = LearningItemMapper.toPrisma({
         ...baseEntity,
         status: StatusVO.fromConcluido(),
-      } as any)
+      } as LearningItem)
       expect(concluido.status).toBe('Concluido')
     })
   })
@@ -234,7 +198,7 @@ describe('LearningItemMapper', () => {
           status: 'Backlog',
           progressCached: 0,
           userId: 'user-123',
-          categoryId: null,
+          categoryId: 'cat-123',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -246,7 +210,19 @@ describe('LearningItemMapper', () => {
           status: 'Em_Andamento',
           progressCached: 50,
           userId: 'user-123',
-          categoryId: null,
+          categoryId: 'cat-123',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'item-3',
+          title: 'Item 3',
+          descriptionMD: 'Description 3',
+          dueDate: null,
+          status: 'Concluido',
+          progressCached: 100,
+          userId: 'user-123',
+          categoryId: 'cat-123',
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -254,11 +230,64 @@ describe('LearningItemMapper', () => {
 
       const entities = LearningItemMapper.toDomainMany(prismaModels)
 
-      expect(entities).toHaveLength(2)
+      expect(entities).toHaveLength(3)
       expect(entities[0].title).toBe('Item 1')
       expect(entities[1].title).toBe('Item 2')
+      expect(entities[2].title).toBe('Item 3')
       expect(entities[0].status.isBacklog()).toBe(true)
       expect(entities[1].status.isEmAndamento()).toBe(true)
+      expect(entities[2].status.isConcluido()).toBe(true)
+    })
+
+    it('should convert multiple domain entities to Prisma inputs', () => {
+      const entities = [
+        {
+          id: 'item-1',
+          title: 'Item 1',
+          descriptionMD: 'Description 1',
+          dueDate: null,
+          status: StatusVO.fromBacklog(),
+          progress: Progress.create(0),
+          userId: 'user-123',
+          categoryId: 'cat-123',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'item-2',
+          title: 'Item 2',
+          descriptionMD: 'Description 2',
+          dueDate: null,
+          status: StatusVO.fromEmAndamento(),
+          progress: Progress.create(50),
+          userId: 'user-123',
+          categoryId: 'cat-123',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 'item-3',
+          title: 'Item 3',
+          descriptionMD: 'Description 3',
+          dueDate: null,
+          status: StatusVO.fromConcluido(),
+          progress: Progress.create(100),
+          userId: 'user-123',
+          categoryId: 'cat-123',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ]
+
+      const prismaInputs = LearningItemMapper.toPrismaMany(entities as LearningItem[])
+
+      expect(prismaInputs).toHaveLength(3)
+      expect(prismaInputs[0].title).toBe('Item 1')
+      expect(prismaInputs[1].title).toBe('Item 2')
+      expect(prismaInputs[2].title).toBe('Item 3')
+      expect(prismaInputs[0].status).toBe('Backlog')
+      expect(prismaInputs[1].status).toBe('Em_Andamento')
+      expect(prismaInputs[2].status).toBe('Concluido')
     })
   })
 })

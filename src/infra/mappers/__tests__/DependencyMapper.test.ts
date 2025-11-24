@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Dependency as PrismaDependency } from '@prisma/client'
-import { DependencyMapper } from '../DependencyMapper'
+import { DependencyMapper } from '@/infra/mappers/DependencyMapper'
+import { Dependency } from '@/core'
 
 describe('DependencyMapper', () => {
   describe('toDomain', () => {
@@ -42,14 +43,9 @@ describe('DependencyMapper', () => {
         sourceItemId: 'item-source',
         targetItemId: 'item-target',
         createdAt: new Date('2025-01-01'),
-        isSelfDependency: () => false,
-        wouldCreateCircularDependency: () => false,
-        equals: () => false,
-        isSameRelationship: () => false,
-        toObject: () => ({}) as any,
       }
 
-      const prismaInput = DependencyMapper.toPrisma(entity as any)
+      const prismaInput = DependencyMapper.toPrisma(entity as Dependency)
 
       expect(prismaInput.id).toBe('dep-123')
       expect(prismaInput.sourceItemId).toBe('item-source')
@@ -106,15 +102,23 @@ describe('DependencyMapper', () => {
           targetItemId: 'item-3',
           createdAt: new Date(),
         },
+        {
+          id: 'dep-3',
+          sourceItemId: 'item-3',
+          targetItemId: 'item-4',
+          createdAt: new Date(),
+        },
       ]
 
-      const prismaInputs = DependencyMapper.toPrismaMany(entities as any)
+      const prismaInputs = DependencyMapper.toPrismaMany(entities as Dependency[])
 
-      expect(prismaInputs).toHaveLength(2)
+      expect(prismaInputs).toHaveLength(3)
       expect(prismaInputs[0].id).toBe('dep-1')
       expect(prismaInputs[1].id).toBe('dep-2')
+      expect(prismaInputs[2].id).toBe('dep-3')
       expect(prismaInputs[0]).not.toHaveProperty('createdAt')
       expect(prismaInputs[1]).not.toHaveProperty('createdAt')
+      expect(prismaInputs[2]).not.toHaveProperty('createdAt')
     })
   })
 })

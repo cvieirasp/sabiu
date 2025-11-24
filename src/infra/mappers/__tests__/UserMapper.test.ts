@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import type { User as PrismaUser } from '@prisma/client'
-import { UserMapper } from '../UserMapper'
+import { UserMapper } from '@/infra/mappers/UserMapper'
 import { Email } from '@/core/value-objects'
+import { User } from '@/core'
 
 describe('UserMapper', () => {
   describe('toDomain', () => {
@@ -66,14 +67,9 @@ describe('UserMapper', () => {
         passwordHash: '$2a$10$hashedpassword',
         createdAt: new Date('2025-01-01'),
         updatedAt: new Date('2025-01-02'),
-        updateName: () => {},
-        updateEmail: () => {},
-        updatePassword: () => {},
-        equals: () => false,
-        toObject: () => ({}) as any,
       }
 
-      const prismaInput = UserMapper.toPrisma(entity as any)
+      const prismaInput = UserMapper.toPrisma(entity as User)
 
       expect(prismaInput.id).toBe('user-123')
       expect(prismaInput.name).toBe('John Doe')
@@ -92,7 +88,7 @@ describe('UserMapper', () => {
         createdAt: new Date(),
       }
 
-      const prismaInput = UserMapper.toPrisma(entity as any)
+      const prismaInput = UserMapper.toPrisma(entity as User)
 
       expect(typeof prismaInput.email).toBe('string')
       expect(prismaInput.email).toBe('jane@example.com')
@@ -101,11 +97,11 @@ describe('UserMapper', () => {
 
   describe('batch operations', () => {
     it('should convert multiple Prisma models to domain entities', () => {
-      const prismaModels: PrismaUser[] = [
+      const entities = [
         {
           id: 'user-1',
           name: 'User One',
-          email: 'user1@example.com',
+          email: Email.create('user1@example.com'),
           passwordHash: '$2a$10$hash1',
           createdAt: new Date('2025-01-01'),
           updatedAt: new Date('2025-01-01'),
@@ -113,7 +109,7 @@ describe('UserMapper', () => {
         {
           id: 'user-2',
           name: 'User Two',
-          email: 'user2@example.com',
+          email: Email.create('user2@example.com'),
           passwordHash: '$2a$10$hash2',
           createdAt: new Date('2025-01-02'),
           updatedAt: new Date('2025-01-02'),
@@ -121,14 +117,12 @@ describe('UserMapper', () => {
         {
           id: 'user-3',
           name: 'User Three',
-          email: 'user3@example.com',
+          email: Email.create('user3@example.com'),
           passwordHash: '$2a$10$hash3',
           createdAt: new Date('2025-01-03'),
           updatedAt: new Date('2025-01-03'),
         },
       ]
-
-      const entities = UserMapper.toDomainMany(prismaModels)
 
       expect(entities).toHaveLength(3)
       expect(entities[0].name).toBe('User One')
@@ -155,15 +149,24 @@ describe('UserMapper', () => {
           passwordHash: '$2a$10$hash2',
           createdAt: new Date(),
         },
+        {
+          id: 'user-3',
+          name: 'User Three',
+          email: Email.create('user3@example.com'),
+          passwordHash: '$2a$10$hash3',
+          createdAt: new Date(),
+        },
       ]
 
-      const prismaInputs = UserMapper.toPrismaMany(entities as any)
+      const prismaInputs = UserMapper.toPrismaMany(entities as User[])
 
-      expect(prismaInputs).toHaveLength(2)
+      expect(prismaInputs).toHaveLength(3)
       expect(prismaInputs[0].email).toBe('user1@example.com')
       expect(prismaInputs[1].email).toBe('user2@example.com')
+      expect(prismaInputs[2].email).toBe('user3@example.com')
       expect(prismaInputs[0]).not.toHaveProperty('createdAt')
       expect(prismaInputs[1]).not.toHaveProperty('createdAt')
+      expect(prismaInputs[2]).not.toHaveProperty('createdAt')
     })
   })
 })

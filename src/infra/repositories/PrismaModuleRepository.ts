@@ -1,9 +1,7 @@
 import {
   PrismaClient,
-  ModuleStatus as PrismaModuleStatus,
 } from '@prisma/client'
 import { Module } from '@/core/entities/Module'
-import { ModuleStatusVO } from '@/core/value-objects'
 import { ModuleRepository } from '@/core/interfaces/ModuleRepository'
 import { ModuleMapper } from '@/infra/mappers/ModuleMapper'
 
@@ -38,21 +36,6 @@ export class PrismaModuleRepository implements ModuleRepository {
     const modules = await this.prisma.module.findMany({
       where: { learningItemId },
       orderBy: { [orderBy]: order },
-    })
-
-    return ModuleMapper.toDomainMany(modules)
-  }
-
-  async findByStatus(
-    learningItemId: string,
-    status: ModuleStatusVO
-  ): Promise<Module[]> {
-    const modules = await this.prisma.module.findMany({
-      where: {
-        learningItemId,
-        status: this.statusToPrisma(status),
-      },
-      orderBy: { order: 'asc' },
     })
 
     return ModuleMapper.toDomainMany(modules)
@@ -103,88 +86,23 @@ export class PrismaModuleRepository implements ModuleRepository {
     return ModuleMapper.toDomain(updated)
   }
 
-  async updateMany(modules: Module[]): Promise<Module[]> {
-    // Use transaction for atomic updates
-    const updated = await this.prisma.$transaction(
-      modules.map(module => {
-        const data = ModuleMapper.toPrisma(module)
-        return this.prisma.module.update({
-          where: { id: module.id },
-          data: {
-            title: data.title,
-            status: data.status,
-            order: data.order,
-          },
-        })
-      })
-    )
-
-    return ModuleMapper.toDomainMany(updated)
-  }
-
-  async delete(id: string): Promise<boolean> {
-    try {
-      await this.prisma.module.delete({
+  async delete(id: string): Promise<void> {
+    await this.prisma.module.delete({
         where: { id },
-      })
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  async deleteByLearningItemId(learningItemId: string): Promise<number> {
-    const result = await this.prisma.module.deleteMany({
-      where: { learningItemId },
-    })
-
-    return result.count
-  }
-
-  async count(learningItemId: string): Promise<number> {
-    return this.prisma.module.count({
-      where: { learningItemId },
-    })
-  }
-
-  async countCompleted(learningItemId: string): Promise<number> {
-    return this.prisma.module.count({
-      where: {
-        learningItemId,
-        status: PrismaModuleStatus.Concluido,
-      },
     })
   }
 
   async reorder(
     learningItemId: string,
     moduleOrders: Array<{ id: string; order: number }>
-  ): Promise<boolean> {
-    try {
-      await this.prisma.$transaction(
-        moduleOrders.map(({ id, order }) =>
-          this.prisma.module.update({
-            where: { id, learningItemId },
-            data: { order },
-          })
-        )
+  ): Promise<void> {
+    await this.prisma.$transaction(
+      moduleOrders.map(({ id, order }) =>
+        this.prisma.module.update({
+          where: { id, learningItemId },
+          data: { order },
+        })
       )
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  /**
-   * Helper to convert ModuleStatusVO to Prisma enum
-   */
-  private statusToPrisma(status: ModuleStatusVO): PrismaModuleStatus {
-    const statusMap = {
-      Pendente: PrismaModuleStatus.Pendente,
-      Em_Andamento: PrismaModuleStatus.Em_Andamento,
-      Concluido: PrismaModuleStatus.Concluido,
-    }
-
-    return statusMap[status.value]
+    )
   }
 }

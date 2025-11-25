@@ -1,5 +1,5 @@
 import type { Module as PrismaModule } from '@prisma/client'
-import { Module } from '@/core/entities'
+import { Module } from '@/core/entities/Module'
 import { ModuleStatusVO } from '@/core/value-objects'
 
 /**

@@ -1,5 +1,5 @@
-import { User } from '../entities'
-import { Email } from '../value-objects'
+import { User } from '@/core/entities/User'
+import { Email } from '@/core/value-objects/Email'
 
 /**
  * User Repository Interface

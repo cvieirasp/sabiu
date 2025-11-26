@@ -1,4 +1,4 @@
-import { Tag } from '../entities'
+import { Tag } from '@/core//entities/Tag'
 
 /**
  * Tag Repository Interface

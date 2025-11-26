@@ -1,5 +1,5 @@
-import { LearningItem } from '../entities'
-import { StatusVO } from '../value-objects'
+import { LearningItem } from '@/core//entities/LearningItem'
+import { StatusVO } from '@/core//value-objects/Status'
 
 /**
  * Learning Item Repository Interface
@@ -152,72 +152,14 @@ export interface LearningItemRepository {
    * This is a specific operation to update just the progress cache
    * @param id - Learning item unique identifier
    * @param progress - New progress value
-   * @returns True if updated successfully
+   * @returns Actual updated progress value
    */
-  updateProgress(id: string, progress: number): Promise<boolean>
+  updateProgress(id: string, progress: number): Promise<number>
 
   /**
    * Delete a learning item by ID
    * This will cascade delete modules and dependencies
    * @param id - Learning item unique identifier
-   * @returns True if deleted, false otherwise
    */
-  delete(id: string): Promise<boolean>
-
-  /**
-   * Count learning items by user
-   * @param userId - User unique identifier
-   * @param filters - Optional status or category filters
-   * @returns Total number of learning items
-   */
-  count(
-    userId: string,
-    filters?: {
-      status?: StatusVO
-      categoryId?: string
-    }
-  ): Promise<number>
-
-  /**
-   * Count learning items grouped by status
-   * @param userId - User unique identifier
-   * @returns Object with count for each status
-   */
-  countByStatus(userId: string): Promise<{
-    backlog: number
-    emAndamento: number
-    pausado: number
-    concluido: number
-  }>
-
-  /**
-   * Count learning items grouped by category
-   * @param userId - User unique identifier
-   * @returns Array of category counts
-   */
-  countByCategory(
-    userId: string
-  ): Promise<Array<{ categoryId: string | null; count: number }>>
-
-  /**
-   * Calculate average progress for user's learning items
-   * @param userId - User unique identifier
-   * @param filters - Optional filters
-   * @returns Average progress percentage
-   */
-  calculateAverageProgress(
-    userId: string,
-    filters?: {
-      status?: StatusVO
-      categoryId?: string
-    }
-  ): Promise<number>
-
-  /**
-   * Get recently updated learning items
-   * @param userId - User unique identifier
-   * @param limit - Maximum number of items to return
-   * @returns Array of recently updated learning items
-   */
-  findRecentlyUpdated(userId: string, limit?: number): Promise<LearningItem[]>
+  delete(id: string): Promise<void>
 }

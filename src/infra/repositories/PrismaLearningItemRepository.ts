@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient, Status as PrismaStatus } from '@prisma/client'
 import { LearningItem } from '@/core/entities/LearningItem'
-import { StatusVO } from '@/core/value-objects'
+import { StatusVO } from '@/core/value-objects/Status'
 import { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
 import { LearningItemMapper } from '@/infra/mappers/LearningItemMapper'
 
@@ -358,129 +358,18 @@ export class PrismaLearningItemRepository implements LearningItemRepository {
     return LearningItemMapper.toDomain(updated)
   }
 
-  async updateProgress(id: string, progress: number): Promise<boolean> {
-    try {
-      await this.prisma.learningItem.update({
-        where: { id },
-        data: { progressCached: progress },
-      })
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  async delete(id: string): Promise<boolean> {
-    try {
-      await this.prisma.learningItem.delete({
-        where: { id },
-      })
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  async count(
-    userId: string,
-    filters?: {
-      status?: StatusVO
-      categoryId?: string
-    }
-  ): Promise<number> {
-    const where: Prisma.LearningItemWhereInput = { userId }
-
-    if (filters?.status) {
-      where.status = this.statusToPrisma(filters.status)
-    }
-
-    if (filters?.categoryId) {
-      where.categoryId = filters.categoryId
-    }
-
-    return this.prisma.learningItem.count({ where })
-  }
-
-  async countByStatus(userId: string): Promise<{
-    backlog: number
-    emAndamento: number
-    pausado: number
-    concluido: number
-  }> {
-    const [backlog, emAndamento, pausado, concluido] = await Promise.all([
-      this.prisma.learningItem.count({
-        where: { userId, status: PrismaStatus.Backlog },
-      }),
-      this.prisma.learningItem.count({
-        where: { userId, status: PrismaStatus.Em_Andamento },
-      }),
-      this.prisma.learningItem.count({
-        where: { userId, status: PrismaStatus.Pausado },
-      }),
-      this.prisma.learningItem.count({
-        where: { userId, status: PrismaStatus.Concluido },
-      }),
-    ])
-
-    return { backlog, emAndamento, pausado, concluido }
-  }
-
-  async countByCategory(
-    userId: string
-  ): Promise<Array<{ categoryId: string | null; count: number }>> {
-    const result = await this.prisma.learningItem.groupBy({
-      by: ['categoryId'],
-      where: { userId },
-      _count: true,
+  async updateProgress(id: string, progress: number): Promise<number> {
+    await this.prisma.learningItem.update({
+      where: { id },
+      data: { progressCached: progress },
     })
-
-    return result.map(r => ({
-      categoryId: r.categoryId,
-      count: r._count,
-    }))
+    return progress
   }
 
-  async calculateAverageProgress(
-    userId: string,
-    filters?: {
-      status?: StatusVO
-      categoryId?: string
-    }
-  ): Promise<number> {
-    const where: Prisma.LearningItemWhereInput = { userId }
-
-    if (filters?.status) {
-      where.status = this.statusToPrisma(filters.status)
-    }
-
-    if (filters?.categoryId) {
-      where.categoryId = filters.categoryId
-    }
-
-    const result = await this.prisma.learningItem.aggregate({
-      where,
-      _avg: {
-        progressCached: true,
-      },
+  async delete(id: string): Promise<void> {
+    await this.prisma.learningItem.delete({
+      where: { id },
     })
-
-    return result._avg.progressCached || 0
-  }
-
-  async findRecentlyUpdated(
-    userId: string,
-    limit: number = 10
-  ): Promise<LearningItem[]> {
-    const learningItems = await this.prisma.learningItem.findMany({
-      where: { userId },
-      orderBy: { updatedAt: 'desc' },
-      take: limit,
-      include: {
-        modules: { orderBy: { order: 'asc' } },
-      },
-    })
-
-    return LearningItemMapper.toDomainMany(learningItems)
   }
 
   /**

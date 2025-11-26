@@ -1,10 +1,11 @@
-import { LearningItem, Module } from '../entities'
-import { StatusVO, Progress, ModuleStatusVO } from '../value-objects'
-import {
-  LearningItemRepository,
-  ModuleRepository,
-  CategoryRepository,
-} from '../interfaces'
+import { LearningItem } from '@/core/entities/LearningItem'
+import { Module } from '@/core/entities/Module'
+import { Progress } from '@/core/value-objects/Progress'
+import { ModuleStatusVO } from '@/core/value-objects/ModuleStatus'
+import { StatusVO } from '@/core/value-objects/Status'
+import { CategoryRepository } from '@/core/interfaces/CategoryRepository'
+import { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
+import { ModuleRepository } from '@/core/interfaces/ModuleRepository'
 import { IdGenerator } from '@/core/interfaces/IdGenerator'
 
 import { ModuleStatus as PrismaModuleStatus } from '@prisma/client'

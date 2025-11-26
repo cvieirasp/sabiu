@@ -13,18 +13,13 @@ import {
   createUnauthorizedError,
   createNotFoundError,
 } from '@/lib/api-errors'
-import {
-  PrismaLearningItemRepository,
-  PrismaModuleRepository,
-  PrismaCategoryRepository,
-  PrismaDependencyRepository,
-} from '@/infra/repositories'
-import {
-  UpdateLearningItem,
-  DeleteLearningItem,
-} from '@/core/use-cases'
-import { StatusVO } from '@/core/value-objects'
-
+import { PrismaCategoryRepository } from '@/infra/repositories/PrismaCategoryRepository'
+import { PrismaDependencyRepository } from '@/infra/repositories/PrismaDependencyRepository'
+import { PrismaLearningItemRepository } from '@/infra/repositories/PrismaLearningItemRepository'
+import { PrismaModuleRepository } from '@/infra/repositories/PrismaModuleRepository'
+import { DeleteLearningItem } from '@/core/use-cases/DeleteLearningItem'
+import { UpdateLearningItem } from '@/core/use-cases/UpdateLearningItem'
+import { StatusVO } from '@/core/value-objects/Status'
 import { makeGetLearningItem } from '@/infra/factories/MakeGetLearningItem'
 
 /**

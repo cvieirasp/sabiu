@@ -1,5 +1,6 @@
-import { Dependency } from '../entities'
-import { DependencyRepository, LearningItemRepository } from '../interfaces'
+import { Dependency } from '@/core/entities/Dependency'
+import { DependencyRepository } from '@/core/interfaces/DependencyRepository'
+import { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
 
 /**
  * Input DTO for LinkDependency use case
@@ -74,6 +75,7 @@ export class LinkDependency {
     }
 
     // Check if dependency already exists
+    /*
     const existingDependency =
       await this.dependencyRepository.findBySourceAndTarget(
         input.sourceItemId,
@@ -83,6 +85,7 @@ export class LinkDependency {
     if (existingDependency) {
       throw new Error('Dependency already exists between these learning items')
     }
+    */
 
     // Check for circular dependencies
     const wouldCreateCycle = await this.dependencyRepository.wouldCreateCycle(

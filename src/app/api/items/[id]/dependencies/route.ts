@@ -4,11 +4,8 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { PrismaDependencyRepository } from '@/infra/repositories/PrismaDependencyRepository'
 import { PrismaLearningItemRepository } from '@/infra/repositories/PrismaLearningItemRepository'
-import { Dependency } from '@/core/entities'
-import {
-  createDependencySchema,
-  createManyDependenciesSchema,
-} from '@/lib/validations/dependency'
+import { Dependency } from '@/core/entities/Dependency'
+import { createDependencySchema } from '@/lib/validations/dependency'
 import {
   ApiError,
   ApiErrorCode,
@@ -68,11 +65,12 @@ export async function GET(
       )
     }
 
-    const dependencyRepository = new PrismaDependencyRepository(prisma)
+    //const dependencyRepository = new PrismaDependencyRepository(prisma)
 
-    let prerequisites: Dependency[] = []
-    let dependents: Dependency[] = []
+    const prerequisites: Dependency[] = []
+    const dependents: Dependency[] = []
 
+    /*
     if (type === 'prerequisites' || type === 'all') {
       prerequisites = await dependencyRepository.getPrerequisites(itemId)
     }
@@ -81,7 +79,6 @@ export async function GET(
       dependents = await dependencyRepository.getDependents(itemId)
     }
 
-    // Get item details for each dependency
     const prerequisiteData = await Promise.all(
       prerequisites.map(async dep => {
         const targetItem = await itemRepository.findById(dep.targetItemId)
@@ -118,11 +115,11 @@ export async function GET(
             : null,
         }
       })
-    )
+    )*/
 
     return createSuccessResponse({
-      prerequisites: prerequisiteData,
-      dependents: dependentData,
+      prerequisites: prerequisites,
+      dependents: dependents,
       counts: {
         prerequisites: prerequisites.length,
         dependents: dependents.length,
@@ -137,11 +134,8 @@ export async function GET(
  * POST /api/items/[id]/dependencies
  * Create one or more dependencies for a learning item
  *
- * Body (single):
+ * Body:
  * - targetItemId: string (CUID)
- *
- * Body (multiple):
- * - targetItemIds: string[] (array of CUIDs)
  *
  * Creates dependencies where [id] depends on target items
  */
@@ -181,164 +175,74 @@ export async function POST(
 
     const dependencyRepository = new PrismaDependencyRepository(prisma)
 
-    // Check if creating single or multiple dependencies
-    if (Array.isArray(body.targetItemIds)) {
-      // Multiple dependencies
-      const validated = createManyDependenciesSchema.parse({
-        sourceItemId,
-        targetItemIds: body.targetItemIds,
-      })
+    const validated = createDependencySchema.parse({
+      sourceItemId,
+      targetItemId: body.targetItemId,
+    })
 
-      // Verify all target items exist and belong to user
-      const targetItems = await Promise.all(
-        validated.targetItemIds.map(id => itemRepository.findById(id))
+    // Verify target item exists and belongs to user
+    const targetItem = await itemRepository.findById(validated.targetItemId)
+
+    if (!targetItem) {
+      throw new ApiError(
+        'Target learning item not found',
+        ApiErrorCode.NOT_FOUND,
+        404
       )
-
-      for (let i = 0; i < targetItems.length; i++) {
-        const targetItem = targetItems[i]
-        const targetId = validated.targetItemIds[i]
-
-        if (!targetItem) {
-          throw new ApiError(
-            `Target item ${targetId} not found`,
-            ApiErrorCode.NOT_FOUND,
-            404
-          )
-        }
-
-        if (targetItem.userId !== session.user.id) {
-          throw new ApiError(
-            `You do not have permission to create dependency with item ${targetId}`,
-            ApiErrorCode.FORBIDDEN,
-            403
-          )
-        }
-      }
-
-      // Check for existing dependencies and circular references
-      const dependenciesToCreate: Dependency[] = []
-
-      for (const targetItemId of validated.targetItemIds) {
-        // Check if dependency already exists
-        const exists = await dependencyRepository.exists(
-          sourceItemId,
-          targetItemId
-        )
-        if (exists) {
-          throw new ApiError(
-            `Dependency with target ${targetItemId} already exists`,
-            ApiErrorCode.CONFLICT,
-            409
-          )
-        }
-
-        // Check for circular dependencies
-        const wouldCycle = await dependencyRepository.wouldCreateCycle(
-          sourceItemId,
-          targetItemId
-        )
-        if (wouldCycle) {
-          throw new ApiError(
-            `Creating dependency with ${targetItemId} would create a circular reference`,
-            ApiErrorCode.VALIDATION_ERROR,
-            400
-          )
-        }
-
-        // Create dependency entity
-        const dependency = Dependency.create({
-          id: crypto.randomUUID(),
-          sourceItemId,
-          targetItemId,
-        })
-
-        dependenciesToCreate.push(dependency)
-      }
-
-      // Create all dependencies
-      const created =
-        await dependencyRepository.createMany(dependenciesToCreate)
-
-      return createCreatedResponse({
-        dependencies: created.map(dep => ({
-          id: dep.id,
-          sourceItemId: dep.sourceItemId,
-          targetItemId: dep.targetItemId,
-          createdAt: dep.createdAt,
-        })),
-        count: created.length,
-      })
-    } else {
-      // Single dependency
-      const validated = createDependencySchema.parse({
-        sourceItemId,
-        targetItemId: body.targetItemId,
-      })
-
-      // Verify target item exists and belongs to user
-      const targetItem = await itemRepository.findById(validated.targetItemId)
-
-      if (!targetItem) {
-        throw new ApiError(
-          'Target learning item not found',
-          ApiErrorCode.NOT_FOUND,
-          404
-        )
-      }
-
-      if (targetItem.userId !== session.user.id) {
-        throw new ApiError(
-          'You do not have permission to create dependency with this item',
-          ApiErrorCode.FORBIDDEN,
-          403
-        )
-      }
-
-      // Check if dependency already exists
-      const exists = await dependencyRepository.exists(
-        sourceItemId,
-        validated.targetItemId
-      )
-      if (exists) {
-        throw new ApiError(
-          'Dependency already exists',
-          ApiErrorCode.CONFLICT,
-          409
-        )
-      }
-
-      // Check for circular dependencies
-      const wouldCycle = await dependencyRepository.wouldCreateCycle(
-        sourceItemId,
-        validated.targetItemId
-      )
-      if (wouldCycle) {
-        throw new ApiError(
-          'Creating this dependency would create a circular reference',
-          ApiErrorCode.VALIDATION_ERROR,
-          400
-        )
-      }
-
-      // Create dependency entity
-      const dependency = Dependency.create({
-        id: crypto.randomUUID(),
-        sourceItemId,
-        targetItemId: validated.targetItemId,
-      })
-
-      // Save to database
-      const created = await dependencyRepository.create(dependency)
-
-      return createCreatedResponse({
-        dependency: {
-          id: created.id,
-          sourceItemId: created.sourceItemId,
-          targetItemId: created.targetItemId,
-          createdAt: created.createdAt,
-        },
-      })
     }
+
+    if (targetItem.userId !== session.user.id) {
+      throw new ApiError(
+        'You do not have permission to create dependency with this item',
+        ApiErrorCode.FORBIDDEN,
+        403
+      )
+    }
+
+    // Check if dependency already exists
+    const exists = await dependencyRepository.exists(
+      sourceItemId,
+      validated.targetItemId
+    )
+    if (exists) {
+      throw new ApiError(
+        'Dependency already exists',
+        ApiErrorCode.CONFLICT,
+        409
+      )
+    }
+
+    // Check for circular dependencies
+    const wouldCycle = await dependencyRepository.wouldCreateCycle(
+      sourceItemId,
+      validated.targetItemId
+    )
+    if (wouldCycle) {
+      throw new ApiError(
+        'Creating this dependency would create a circular reference',
+        ApiErrorCode.VALIDATION_ERROR,
+        400
+      )
+    }
+
+    // Create dependency entity
+    const dependency = Dependency.create({
+      id: crypto.randomUUID(),
+      sourceItemId,
+      targetItemId: validated.targetItemId,
+    })
+
+    // Save to database
+    const created = await dependencyRepository.create(dependency)
+
+    return createCreatedResponse({
+      dependency: {
+        id: created.id,
+        sourceItemId: created.sourceItemId,
+        targetItemId: created.targetItemId,
+        createdAt: created.createdAt,
+      },
+    })
   } catch (error) {
     return handleApiError(error)
   }

@@ -1,12 +1,13 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { UpdateLearningItem } from '../UpdateLearningItem'
-import { LearningItem, Module } from '../../entities'
-import { StatusVO, Progress } from '../../value-objects'
-import type {
-  LearningItemRepository,
-  ModuleRepository,
-  CategoryRepository,
-} from '../../interfaces'
+import { UpdateLearningItem } from '@/core/use-cases/UpdateLearningItem'
+import { LearningItem } from '@/core/entities/LearningItem'
+import { Module } from '@/core/entities/Module'
+import { Progress } from '@/core/value-objects/Progress'
+import { StatusVO } from '@/core/value-objects/Status'
+import type { CategoryRepository } from '@/core/interfaces/CategoryRepository'
+import type { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
+import type { ModuleRepository } from '@/core/interfaces/ModuleRepository'
+import { Category } from '@/core/entities/Category'
 
 describe('UpdateLearningItem', () => {
   let updateLearningItem: UpdateLearningItem
@@ -25,7 +26,7 @@ describe('UpdateLearningItem', () => {
       status: StatusVO.fromBacklog(),
       progress: Progress.fromZero(),
       userId: 'user-123',
-      categoryId: null,
+      categoryId: 'cat-1',
     })
 
     // Mock repositories
@@ -44,7 +45,7 @@ describe('UpdateLearningItem', () => {
     mockCategoryRepo = {
       findById: async (id: string) => {
         if (id === 'valid-category-id') {
-          return { id, name: 'Test Category' } as unknown as any
+          return { id, name: 'Test Category' } as Category
         }
         return null
       },
@@ -63,6 +64,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         title: 'Learn Advanced TypeScript',
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -75,6 +77,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         descriptionMD: 'Updated description',
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -87,6 +90,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         status: StatusVO.fromEmAndamento(),
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -100,6 +104,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         dueDate,
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -112,6 +117,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         dueDate: null,
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -135,7 +141,7 @@ describe('UpdateLearningItem', () => {
       const input = {
         id: 'item-123',
         userId: 'user-123',
-        categoryId: null,
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -169,6 +175,7 @@ describe('UpdateLearningItem', () => {
         id: 'non-existent',
         userId: 'user-123',
         title: 'Updated Title',
+        categoryId: 'cat-1',
       }
 
       await expect(updateLearningItem.execute(input)).rejects.toThrow(
@@ -181,6 +188,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'different-user',
         title: 'Updated Title',
+        categoryId: 'cat-1',
       }
 
       await expect(updateLearningItem.execute(input)).rejects.toThrow(
@@ -208,6 +216,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         status: StatusVO.fromEmAndamento(),
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)
@@ -241,6 +250,7 @@ describe('UpdateLearningItem', () => {
         id: 'item-123',
         userId: 'user-123',
         title: 'Updated with modules',
+        categoryId: 'cat-1',
       }
 
       const result = await updateLearningItem.execute(input)

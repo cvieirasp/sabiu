@@ -1,10 +1,8 @@
-import { LearningItem } from '../entities'
-import { StatusVO } from '../value-objects'
-import {
-  LearningItemRepository,
-  ModuleRepository,
-  CategoryRepository,
-} from '../interfaces'
+import { LearningItem } from '@/core/entities/LearningItem'
+import { StatusVO } from '@/core/value-objects/Status'
+import { CategoryRepository } from '@/core/interfaces/CategoryRepository'
+import { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
+import { ModuleRepository } from '@/core/interfaces/ModuleRepository'
 
 /**
  * Input DTO for UpdateLearningItem use case

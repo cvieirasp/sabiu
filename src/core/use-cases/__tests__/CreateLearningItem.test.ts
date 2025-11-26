@@ -1,24 +1,25 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { CreateLearningItem } from '../CreateLearningItem'
-import { LearningItem, Module } from '../../entities'
-import { StatusVO } from '../../value-objects'
-import type {
-  LearningItemRepository,
-  ModuleRepository,
-  CategoryRepository,
-} from '../../interfaces'
+import { CreateLearningItem, CreateLearningItemInput } from '@/core/use-cases/CreateLearningItem'
+import { LearningItem } from '@/core/entities/LearningItem'
+import { Module } from '@/core/entities/Module'
+import type { CategoryRepository } from '@/core/interfaces/CategoryRepository'
+import type { LearningItemRepository } from '@/core/interfaces/LearningItemRepository'
+import type { ModuleRepository } from '@/core/interfaces/ModuleRepository'
+import { IdGenerator } from '@/core/interfaces/IdGenerator'
+import { Category } from '@/core/entities/Category'
 
 describe('CreateLearningItem', () => {
   let createLearningItem: CreateLearningItem
   let mockLearningItemRepo: LearningItemRepository
   let mockModuleRepo: ModuleRepository
   let mockCategoryRepo: CategoryRepository
+  let mockIdGenerator: IdGenerator
 
   beforeEach(() => {
     // Mock repositories
     mockLearningItemRepo = {
       create: async (item: LearningItem) => item,
-      updateProgress: async () => true,
+      updateProgress: async () => 100,
     } as Partial<LearningItemRepository> as LearningItemRepository
 
     mockModuleRepo = {
@@ -28,16 +29,22 @@ describe('CreateLearningItem', () => {
     mockCategoryRepo = {
       findById: async (id: string) => {
         if (id === 'valid-category-id') {
-          return { id, name: 'Test Category' } as unknown as any
+          return { id, name: 'Test Category' } as Category
         }
         return null
       },
     } as Partial<CategoryRepository> as CategoryRepository
 
+    // Mock id generator to produce predictable IDs
+    mockIdGenerator = {
+      generate: () => 'cmig1n90d000304l7fabd6fnr',
+    }
+
     createLearningItem = new CreateLearningItem(
       mockLearningItemRepo,
       mockModuleRepo,
-      mockCategoryRepo
+      mockCategoryRepo,
+      mockIdGenerator,
     )
   })
 
@@ -47,7 +54,7 @@ describe('CreateLearningItem', () => {
         title: 'Learn TypeScript',
         descriptionMD: 'Complete TypeScript course',
         userId: 'user-123',
-      }
+      } as CreateLearningItemInput
 
       const result = await createLearningItem.execute(input)
 
@@ -71,7 +78,7 @@ describe('CreateLearningItem', () => {
           { title: 'Components', order: 2 },
           { title: 'Hooks', order: 3 },
         ],
-      }
+      } as CreateLearningItemInput
 
       const result = await createLearningItem.execute(input)
 
@@ -87,8 +94,7 @@ describe('CreateLearningItem', () => {
         title: 'Learn Node.js',
         descriptionMD: 'Complete Node.js course',
         userId: 'user-123',
-        status: StatusVO.fromEmAndamento(),
-      }
+      } as CreateLearningItemInput
 
       const result = await createLearningItem.execute(input)
 
@@ -102,7 +108,7 @@ describe('CreateLearningItem', () => {
         descriptionMD: 'Complete GraphQL course',
         userId: 'user-123',
         dueDate,
-      }
+      } as CreateLearningItemInput
 
       const result = await createLearningItem.execute(input)
 
@@ -140,7 +146,7 @@ describe('CreateLearningItem', () => {
         title: 'Learn Docker',
         descriptionMD: 'Complete Docker course',
         userId: 'user-123',
-      }
+      } as CreateLearningItemInput
 
       const result = await createLearningItem.execute(input)
 
@@ -152,7 +158,7 @@ describe('CreateLearningItem', () => {
         title: 'Learn Kubernetes',
         descriptionMD: 'Complete Kubernetes course',
         userId: 'user-123',
-      }
+      } as CreateLearningItemInput
 
       const result = await createLearningItem.execute(input)
 
@@ -165,7 +171,7 @@ describe('CreateLearningItem', () => {
         title: '',
         descriptionMD: 'Complete course',
         userId: 'user-123',
-      }
+      } as CreateLearningItemInput
 
       await expect(createLearningItem.execute(input)).rejects.toThrow()
     })
@@ -175,7 +181,7 @@ describe('CreateLearningItem', () => {
         title: 'Learn AWS',
         descriptionMD: 'Complete AWS course',
         userId: '',
-      }
+      } as CreateLearningItemInput
 
       await expect(createLearningItem.execute(input)).rejects.toThrow()
     })

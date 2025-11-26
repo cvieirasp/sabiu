@@ -1,4 +1,4 @@
-import { ModuleStatusVO } from '../value-objects'
+import { ModuleStatusVO } from '@/core/value-objects/ModuleStatus'
 
 /**
  * Module Entity

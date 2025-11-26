@@ -1,5 +1,6 @@
-import { StatusVO, Progress } from '../value-objects'
-import { Module } from './Module'
+import { Progress } from '@/core/value-objects/Progress'
+import { StatusVO } from '@/core/value-objects/Status'
+import { Module } from '@/core/entities/Module'
 
 /**
  * Learning Item Entity (Aggregate Root)

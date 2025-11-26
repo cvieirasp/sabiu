@@ -4,7 +4,8 @@ import type {
   Module as PrismaModule,
 } from '@prisma/client'
 import { LearningItem } from '@/core/entities/LearningItem'
-import { StatusVO, Progress } from '@/core/value-objects'
+import { Progress } from '@/core/value-objects/Progress'
+import { StatusVO } from '@/core/value-objects/Status'
 import { LearningItemDTO } from '@/core/interfaces/LearningItemQueryRepository'
 import { ModuleMapper } from './ModuleMapper'
 
@@ -81,7 +82,7 @@ export class LearningItemMapper {
       title: entity.title,
       descriptionMD: entity.descriptionMD,
       dueDate: entity.dueDate,
-      status: statusMap[entity.status.value],
+      status: statusMap[entity.status.value as keyof typeof statusMap],
       progressCached: entity.progress.value,
       userId: entity.userId,
       categoryId: entity.categoryId,

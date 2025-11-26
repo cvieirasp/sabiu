@@ -4,7 +4,8 @@ import type {
   Module as PrismaModule,
 } from '@prisma/client'
 import { LearningItemMapper } from '@/infra/mappers/LearningItemMapper'
-import { StatusVO, Progress } from '@/core/value-objects'
+import { Progress } from '@/core/value-objects/Progress'
+import { StatusVO } from '@/core/value-objects/Status'
 import { LearningItem } from '@/core/entities/LearningItem'
 
 describe('LearningItemMapper', () => {

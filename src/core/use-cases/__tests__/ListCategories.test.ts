@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { Category } from '@/core/entities'
+import { Category } from '@/core/entities/Category'
 import type { CategoryRepository } from '@/core/interfaces/CategoryRepository'
 import { ListCategories, CategoryOutput } from '@/core/use-cases/ListCategories'
 

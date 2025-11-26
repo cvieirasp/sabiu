@@ -1,5 +1,5 @@
 import { Prisma, PrismaClient, Status as PrismaStatus } from '@prisma/client'
-import { StatusVO } from '@/core/value-objects'
+import { StatusVO } from '@/core/value-objects/Status'
 import {
   LearningItemQueryRepository,
   ListLearningItemParams,

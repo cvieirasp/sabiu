@@ -11,7 +11,7 @@ import {
   createCreatedResponse,
   createUnauthorizedError,
 } from '@/lib/api-errors'
-import { StatusVO } from '@/core/value-objects'
+import { StatusVO } from '@/core/value-objects/Status'
 import { makeCreateLearningItem } from '@/infra/factories/MakeCreateLearningItem'
 import { makeListLearningItems } from '@/infra/factories/MakeListLearningItems'
 

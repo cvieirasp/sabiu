@@ -1,4 +1,4 @@
-import { StatusVO } from '../value-objects'
+import { StatusVO } from '@/core/value-objects/Status'
 import {
   LearningItemDTO,
   LearningItemQueryRepository,

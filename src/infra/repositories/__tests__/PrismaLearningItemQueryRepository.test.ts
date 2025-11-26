@@ -2,7 +2,7 @@ import { Status as PrismaStatus, type PrismaClient } from "@prisma/client"
 import { describe, it, expect, beforeEach, vi } from "vitest"
 import { PrismaLearningItemQueryRepository } from '@/infra/repositories/PrismaLearningItemQueryRepository'
 import { LearningItemMapper } from "@/infra/mappers/LearningItemMapper"
-import { StatusVO } from "@/core/value-objects"
+import { StatusVO } from "@/core/value-objects/Status"
 import type { LearningItemDTO, ListLearningItemParams } from "@/core/interfaces/LearningItemQueryRepository"
 
 function makePrismaMock() {

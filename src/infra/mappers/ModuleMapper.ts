@@ -1,6 +1,6 @@
 import type { Module as PrismaModule } from '@prisma/client'
 import { Module } from '@/core/entities/Module'
-import { ModuleStatusVO } from '@/core/value-objects'
+import { ModuleStatusVO } from '@/core/value-objects/ModuleStatus'
 
 /**
  * Module Mapper
@@ -47,7 +47,7 @@ export class ModuleMapper {
       id: entity.id,
       learningItemId: entity.learningItemId,
       title: entity.title,
-      status: statusMap[entity.status.value],
+      status: statusMap[entity.status.value as keyof typeof statusMap],
       order: entity.order,
     }
   }

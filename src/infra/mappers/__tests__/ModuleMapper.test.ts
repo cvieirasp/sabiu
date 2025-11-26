@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import type { Module as PrismaModule } from '@prisma/client'
 import { ModuleMapper } from '@/infra/mappers/ModuleMapper'
-import { ModuleStatusVO } from '@/core/value-objects'
+import { ModuleStatusVO } from '@/core/value-objects/ModuleStatus'
 import { Module } from '@/core/entities/Module'
 
 describe('ModuleMapper', () => {

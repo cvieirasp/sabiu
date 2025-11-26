@@ -69,10 +69,10 @@ export async function DELETE(
       )
     }
 
-    // Delete dependency
-    const deleted = await dependencyRepository.delete(dependencyId)
-
-    if (!deleted) {
+    try {
+      await dependencyRepository.delete(dependencyId)
+    } catch (error) {
+      console.error('Error deleting dependency:', error)
       throw new ApiError(
         'Failed to delete dependency',
         ApiErrorCode.INTERNAL_ERROR,

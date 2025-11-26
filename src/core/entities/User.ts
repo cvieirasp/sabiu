@@ -1,4 +1,4 @@
-import { Email } from '../value-objects'
+import { Email } from '@/core/value-objects/Email'
 
 /**
  * User Entity

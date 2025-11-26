@@ -1,5 +1,5 @@
 import type { User as PrismaUser } from '@prisma/client'
-import { User } from '@/core/entities'
+import { User } from '@/core/entities/User'
 import { Email } from '@/core/value-objects'
 
 /**

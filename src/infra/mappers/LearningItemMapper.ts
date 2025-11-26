@@ -3,7 +3,7 @@ import type {
   LearningItem as PrismaLearningItem,
   Module as PrismaModule,
 } from '@prisma/client'
-import { LearningItem } from '@/core/entities'
+import { LearningItem } from '@/core/entities/LearningItem'
 import { StatusVO, Progress } from '@/core/value-objects'
 import { LearningItemDTO } from '@/core/interfaces/LearningItemQueryRepository'
 import { ModuleMapper } from './ModuleMapper'

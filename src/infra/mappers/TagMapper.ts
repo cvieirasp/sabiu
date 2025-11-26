@@ -1,5 +1,5 @@
 import type { Tag as PrismaTag } from '@prisma/client'
-import { Tag } from '@/core/entities'
+import { Tag } from '@/core/entities/Tag'
 
 /**
  * Tag Mapper

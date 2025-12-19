@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { Status } from '@/core/value-objects'
+import { Status } from '@/core/value-objects/Status'
 
 /**
  * Zod schema for LearningItem creation

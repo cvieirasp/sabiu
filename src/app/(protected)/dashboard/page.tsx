@@ -4,6 +4,7 @@ import { ItemsByStatusChart } from '@/components/features/dashboard/ItemsByStatu
 import { TopItemsToComplete } from '@/components/features/dashboard/TopItemsToComplete'
 import { OverallProgressChart } from '@/components/features/dashboard/OverallProgressChart'
 import { RecentlyViewedItems } from '@/components/features/dashboard/RecentlyViewedItems'
+import { CreateItemButton } from '@/components/features/dashboard/CreateItemButton'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function DashboardPage() {
@@ -13,6 +14,9 @@ export default function DashboardPage() {
         title="Dashboard"
         subtitle="Bem-vindo ao Sabiu! Aqui você acompanha seu progresso de aprendizado."
       />
+
+      {/* Floating Action Button */}
+      <CreateItemButton />
 
       {/* Dashboard Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

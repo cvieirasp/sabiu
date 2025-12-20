@@ -15,20 +15,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
   ItemsTable,
   type LearningItemRow,
   type SortField,
   type SortDirection,
 } from '@/components/features/items/ItemsTable'
 import { ItemsTableSkeleton } from '@/components/features/items/ItemsTableSkeleton'
-import { ItemForm, type ItemFormValues } from '@/components/forms/ItemForm'
+import { CreateItemModal } from '@/components/features/items/CreateItemModal'
 import { PageHeader } from '@/components/layouts/page-header'
 
 const STATUS_OPTIONS = [
@@ -249,28 +242,7 @@ export default function ItemsPage() {
     setIsCreateModalOpen(true)
   }
 
-  const handleCreateItem = async (values: ItemFormValues) => {
-    const response = await fetch('/api/items', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        title: values.title,
-        descriptionMD: values.descriptionMD,
-        dueDate: values.dueDate?.toISOString(),
-        categoryId: values.categoryId,
-        modules: values.modules,
-        dependencyIds: values.dependencyIds,
-      }),
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.error?.message || 'Failed to create item')
-    }
-
-    setIsCreateModalOpen(false)
+  const handleCreateSuccess = async () => {
     await refetch()
   }
 
@@ -429,17 +401,11 @@ export default function ItemsPage() {
       )}
 
       {/* Create Item Modal */}
-      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Criar Novo Item de Aprendizado</DialogTitle>
-            <DialogDescription>
-              Preencha os detalhes do seu novo item de aprendizado
-            </DialogDescription>
-          </DialogHeader>
-          <ItemForm onSubmit={handleCreateItem} submitLabel="Criar Item" />
-        </DialogContent>
-      </Dialog>
+      <CreateItemModal
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   )
 }

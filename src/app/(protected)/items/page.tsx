@@ -29,6 +29,7 @@ import {
 } from '@/components/features/items/ItemsTable'
 import { ItemsTableSkeleton } from '@/components/features/items/ItemsTableSkeleton'
 import { ItemForm, type ItemFormValues } from '@/components/forms/ItemForm'
+import { PageHeader } from '@/components/layouts/page-header'
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'Todos os status' },
@@ -280,18 +281,16 @@ export default function ItemsPage() {
   return (
     <div className="container mx-auto py-8 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Itens de Aprendizado</h1>
-          <p className="text-muted-foreground mt-1">
-            Gerencie seus cursos, vídeos, livros e certificações
-          </p>
-        </div>
-        <Button className="cursor-pointer" onClick={handleNewItem}>
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Item
-        </Button>
-      </div>
+      <PageHeader
+        title="Itens de Aprendizado"
+        subtitle="Gerencie seus cursos, vídeos, livros e certificações"
+        action={
+          <Button className="cursor-pointer" onClick={handleNewItem}>
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Item
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-4">

@@ -2,6 +2,8 @@ import { PageHeader } from '@/components/layouts/page-header'
 import { ItemsByCategoryChart } from '@/components/features/dashboard/ItemsByCategoryChart'
 import { ItemsByStatusChart } from '@/components/features/dashboard/ItemsByStatusChart'
 import { TopItemsToComplete } from '@/components/features/dashboard/TopItemsToComplete'
+import { OverallProgressChart } from '@/components/features/dashboard/OverallProgressChart'
+import { RecentlyViewedItems } from '@/components/features/dashboard/RecentlyViewedItems'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function DashboardPage() {
@@ -46,6 +48,30 @@ export default function DashboardPage() {
           <CardContent>
             <div className="h-[300px]">
               <TopItemsToComplete title="" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recently Viewed Items */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Vistos Recentemente</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <RecentlyViewedItems title="" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Overall Progress Chart - Spans 2 columns */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Progresso Médio por Categoria</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <OverallProgressChart title="" />
             </div>
           </CardContent>
         </Card>

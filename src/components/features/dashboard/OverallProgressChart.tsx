@@ -54,7 +54,7 @@ export function OverallProgressChart({
 
   // Transform API data to chart format
   // Group by month and create data points
-  const monthsMap = new Map<string, Record<string, number>>()
+  const monthsMap = new Map<string, LineChartDataPoint>()
   const categoriesSet = new Set<string>()
   const categoryColors = new Map<string, string>()
 
@@ -64,7 +64,7 @@ export function OverallProgressChart({
     const monthLabel = MONTH_LABELS[month] || month
 
     if (!monthsMap.has(monthLabel)) {
-      monthsMap.set(monthLabel, { name: monthLabel })
+      monthsMap.set(monthLabel, { name: monthLabel } as LineChartDataPoint)
     }
 
     const monthData = monthsMap.get(monthLabel)!
@@ -82,7 +82,7 @@ export function OverallProgressChart({
     }
   })
 
-  const chartData: LineChartDataPoint[] = Array.from(monthsMap.values())
+  const chartData = Array.from(monthsMap.values())
 
   const lines: LineConfig[] = Array.from(categoriesSet).map(categoryName => ({
     dataKey: categoryName,

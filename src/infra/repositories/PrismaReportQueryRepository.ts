@@ -181,17 +181,17 @@ export class PrismaReportQueryRepository implements DashboardQueryRepository {
       }>
     >`
       SELECT
-        TO_CHAR(li.created_at, 'YYYY-MM') as month,
+        TO_CHAR(li."createdAt", 'YYYY-MM') as month,
         c.id as "categoryId",
         c.name as "categoryName",
-        ROUND(AVG(li.progress_cached)::numeric, 2) as "averageProgress"
+        ROUND(AVG(li."progressCached")::numeric, 2) as "averageProgress"
       FROM learning_items li
-      INNER JOIN categories c ON li.category_id = c.id
+      INNER JOIN categories c ON li."categoryId" = c.id
       WHERE
-        li.user_id = ${userId}
-        AND li.created_at >= ${startDate}
+        li."userId" = ${userId}
+        AND li."createdAt" >= ${startDate}
       GROUP BY
-        TO_CHAR(li.created_at, 'YYYY-MM'),
+        TO_CHAR(li."createdAt", 'YYYY-MM'),
         c.id,
         c.name
       ORDER BY

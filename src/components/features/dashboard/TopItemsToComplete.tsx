@@ -1,36 +1,9 @@
 'use client'
 
 import { Progress } from '@/components/ui/progress'
-import { Trophy, Medal, Award } from 'lucide-react'
-
-interface TopItem {
-  id: string
-  title: string
-  progress: number
-  category: string
-}
-
-// Mock data - will be replaced with real API data later
-const MOCK_DATA: TopItem[] = [
-  {
-    id: '1',
-    title: 'React Advanced Patterns',
-    progress: 85,
-    category: 'E-Learning',
-  },
-  {
-    id: '2',
-    title: 'TypeScript Deep Dive',
-    progress: 78,
-    category: 'Book',
-  },
-  {
-    id: '3',
-    title: 'Next.js Performance Optimization',
-    progress: 72,
-    category: 'YouTube',
-  },
-]
+import { Trophy, Medal, Award, AlertCircle } from 'lucide-react'
+import { useTopItemsToComplete } from '@/hooks/useDashboardReports'
+import { Skeleton } from '@/components/ui/skeleton'
 
 interface TopItemsToCompleteProps {
   title?: string
@@ -47,13 +20,41 @@ export function TopItemsToComplete({
   title = 'Próximos a Concluir',
   className,
 }: TopItemsToCompleteProps) {
+  const { data, isLoading, error } = useTopItemsToComplete(3)
+
+  if (isLoading) {
+    return (
+      <div className={`h-full w-full ${className || ''}`}>
+        {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+        <div className="space-y-4">
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-20 w-full" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className={`h-full w-full flex items-center justify-center ${className || ''}`}>
+        <div className="text-center p-6">
+          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            Erro ao carregar dados
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`h-full w-full ${className || ''}`}>
       {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
 
       <div className="space-y-4">
-        {MOCK_DATA.map((item, index) => {
-          const { Icon, color, bgColor } = RANK_ICONS[index]
+        {data?.map((item, index) => {
+          const { Icon, color, bgColor } = RANK_ICONS[index] || RANK_ICONS[2]
 
           return (
             <div
@@ -74,7 +75,7 @@ export function TopItemsToComplete({
                   </span>
                 </div>
 
-                <p className="text-xs text-muted-foreground mb-2">{item.category}</p>
+                <p className="text-xs text-muted-foreground mb-2">{item.categoryName}</p>
 
                 {/* Progress Bar */}
                 <Progress value={item.progress} className="h-2" />
@@ -85,7 +86,7 @@ export function TopItemsToComplete({
       </div>
 
       {/* Empty State */}
-      {MOCK_DATA.length === 0 && (
+      {data && data.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center p-6">
           <Award className="w-12 h-12 text-muted-foreground mb-3" />
           <p className="text-sm text-muted-foreground">

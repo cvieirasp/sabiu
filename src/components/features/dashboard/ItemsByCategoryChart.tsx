@@ -1,34 +1,9 @@
 'use client'
 
 import { DonutChart, type DonutChartData } from './DonutChart'
-
-// Mock data - will be replaced with real API data later
-const MOCK_DATA: DonutChartData[] = [
-  {
-    id: 'cat-1',
-    name: 'E-Learning',
-    color: '#3B82F6',
-    value: 12,
-  },
-  {
-    id: 'cat-2',
-    name: 'YouTube',
-    color: '#FF5733',
-    value: 8,
-  },
-  {
-    id: 'cat-3',
-    name: 'Book',
-    color: '#10B981',
-    value: 5,
-  },
-  {
-    id: 'cat-4',
-    name: 'MBA',
-    value: 7,
-    color: '#F59E0B', // Warning
-  },
-]
+import { useItemsByCategory } from '@/hooks/useDashboardReports'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AlertCircle } from 'lucide-react'
 
 interface ItemsByCategoryChartProps {
   title?: string
@@ -39,9 +14,39 @@ export function ItemsByCategoryChart({
   title = 'Itens por Categoria',
   className,
 }: ItemsByCategoryChartProps) {
+  const { data, isLoading, error } = useItemsByCategory()
+
+  if (isLoading) {
+    return (
+      <div className={`h-full w-full ${className || ''}`}>
+        <Skeleton className="h-full w-full" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className={`h-full w-full flex items-center justify-center ${className || ''}`}>
+        <div className="text-center p-6">
+          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            Erro ao carregar dados
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const chartData: DonutChartData[] = data?.map(item => ({
+    id: item.categoryId,
+    name: item.categoryName,
+    color: item.categoryColor,
+    value: item.count,
+  })) || []
+
   return (
     <div className={`h-full w-full ${className || ''}`}>
-      <DonutChart data={MOCK_DATA} title={title} />
+      <DonutChart data={chartData} title={title} />
     </div>
   )
 }

@@ -1,70 +1,56 @@
 'use client'
 
-import { Clock, BookOpen, Video, GraduationCap, Monitor } from 'lucide-react'
+import { Clock, BookOpen, Video, GraduationCap, Monitor, AlertCircle } from 'lucide-react'
 import { Progress } from '@/components/ui/progress'
+import { useRecentlyViewedItems } from '@/hooks/useDashboardReports'
+import { Skeleton } from '@/components/ui/skeleton'
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
-interface RecentItem {
-  id: string
-  title: string
-  category: string
-  categoryType: 'E-Learning' | 'YouTube' | 'Book' | 'MBA'
-  progress: number
-  viewedAt: string
-}
-
-// Mock data - will be replaced with real API data later
-const MOCK_DATA: RecentItem[] = [
-  {
-    id: '1',
-    title: 'Advanced TypeScript Patterns',
-    category: 'E-Learning',
-    categoryType: 'E-Learning',
-    progress: 67,
-    viewedAt: '2 horas atrás',
-  },
-  {
-    id: '2',
-    title: 'Clean Code Principles',
-    category: 'Book',
-    categoryType: 'Book',
-    progress: 45,
-    viewedAt: 'Ontem',
-  },
-  {
-    id: '3',
-    title: 'System Design Interview',
-    category: 'YouTube',
-    categoryType: 'YouTube',
-    progress: 23,
-    viewedAt: 'Há 3 dias',
-  },
-]
-
-const CATEGORY_CONFIGS = {
+const CATEGORY_CONFIGS: Record<string, {
+  Icon: typeof Monitor
+  bgColor: string
+  iconColor: string
+  color: string
+}> = {
   'E-Learning': {
     Icon: Monitor,
     bgColor: 'bg-blue-500/10',
     iconColor: 'text-blue-500',
     color: '#3B82F6',
   },
-  YouTube: {
+  'YouTube': {
     Icon: Video,
     bgColor: 'bg-red-500/10',
     iconColor: 'text-red-500',
     color: '#FF5733',
   },
-  Book: {
+  'Book': {
     Icon: BookOpen,
     bgColor: 'bg-green-500/10',
     iconColor: 'text-green-500',
     color: '#10B981',
   },
-  MBA: {
+  'MBA': {
     Icon: GraduationCap,
     bgColor: 'bg-amber-500/10',
     iconColor: 'text-amber-500',
     color: '#F59E0B',
   },
+  'Certification': {
+    Icon: GraduationCap,
+    bgColor: 'bg-purple-500/10',
+    iconColor: 'text-purple-500',
+    color: '#8B5CF6',
+  },
+}
+
+// Default config for unknown categories
+const DEFAULT_CONFIG = {
+  Icon: Monitor,
+  bgColor: 'bg-slate-500/10',
+  iconColor: 'text-slate-500',
+  color: '#64748B',
 }
 
 interface RecentlyViewedItemsProps {
@@ -76,14 +62,47 @@ export function RecentlyViewedItems({
   title = 'Vistos Recentemente',
   className,
 }: RecentlyViewedItemsProps) {
+  const { data, isLoading, error } = useRecentlyViewedItems(3)
+
+  if (isLoading) {
+    return (
+      <div className={`h-full w-full ${className || ''}`}>
+        {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+        <div className="space-y-3">
+          {[1, 2, 3].map(i => (
+            <Skeleton key={i} className="h-24 w-full" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className={`h-full w-full flex items-center justify-center ${className || ''}`}>
+        <div className="text-center p-6">
+          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            Erro ao carregar dados
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`h-full w-full ${className || ''}`}>
       {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
 
       <div className="space-y-3">
-        {MOCK_DATA.map((item) => {
-          const config = CATEGORY_CONFIGS[item.categoryType]
+        {data?.map((item) => {
+          const config = CATEGORY_CONFIGS[item.categoryType] || DEFAULT_CONFIG
           const { Icon, bgColor, iconColor, color } = config
+
+          const timeAgo = formatDistanceToNow(item.viewedAt, {
+            addSuffix: true,
+            locale: ptBR,
+          })
 
           return (
             <div
@@ -109,12 +128,12 @@ export function RecentlyViewedItems({
                 {/* Category and Timestamp */}
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xs font-medium" style={{ color }}>
-                    {item.category}
+                    {item.categoryName}
                   </span>
                   <span className="text-xs text-muted-foreground">•</span>
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
                     <Clock className="w-3 h-3" />
-                    <span>{item.viewedAt}</span>
+                    <span>{timeAgo}</span>
                   </div>
                 </div>
 
@@ -135,7 +154,7 @@ export function RecentlyViewedItems({
       </div>
 
       {/* Empty State */}
-      {MOCK_DATA.length === 0 && (
+      {data && data.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center p-6">
           <Clock className="w-12 h-12 text-muted-foreground mb-3" />
           <p className="text-sm text-muted-foreground">

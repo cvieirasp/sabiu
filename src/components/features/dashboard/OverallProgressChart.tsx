@@ -1,48 +1,116 @@
 'use client'
 
 import { LineChart, type LineChartDataPoint, type LineConfig } from './LineChart'
-
-// Mock data - will be replaced with real API data later
-// Represents average progress per category over the last 12 months
-const MOCK_DATA: LineChartDataPoint[] = [
-  { name: 'Jan', 'E-Learning': 10, 'YouTube': 8, 'Book': 20, 'MBA': 12 },
-  { name: 'Fev', 'E-Learning': 15, 'YouTube': 12, 'Book': 10, 'MBA': 18 },
-  { name: 'Mar', 'E-Learning': 22, 'YouTube': 5, 'Book': 15, 'MBA': 25 },
-  { name: 'Abr', 'E-Learning': 18, 'YouTube': 3, 'Book': 12, 'MBA': 32 },
-  { name: 'Mai', 'E-Learning': 35, 'YouTube': 20, 'Book': 10, 'MBA': 40 },
-  { name: 'Jun', 'E-Learning': 24, 'YouTube': 38, 'Book': 8, 'MBA': 48 },
-  { name: 'Jul', 'E-Learning': 42, 'YouTube': 10, 'Book': 13, 'MBA': 55 },
-  { name: 'Ago', 'E-Learning': 58, 'YouTube': 15, 'Book': 16, 'MBA': 63 },
-  { name: 'Set', 'E-Learning': 40, 'YouTube': 26, 'Book': 23, 'MBA': 70 },
-  { name: 'Out', 'E-Learning': 45, 'YouTube': 34, 'Book': 21, 'MBA': 76 },
-  { name: 'Nov', 'E-Learning': 69, 'YouTube': 20, 'Book': 12, 'MBA': 82 },
-  { name: 'Dez', 'E-Learning': 85, 'YouTube': 13, 'Book': 7, 'MBA': 88 },
-]
-
-// Line configurations matching category colors
-const LINES: LineConfig[] = [
-  { dataKey: 'E-Learning', name: 'E-Learning', color: '#3B82F6' },
-  { dataKey: 'YouTube', name: 'YouTube', color: '#FF5733' },
-  { dataKey: 'Book', name: 'Book', color: '#10B981' },
-  { dataKey: 'MBA', name: 'MBA', color: '#F59E0B' },
-]
+import { useProgressByCategory } from '@/hooks/useDashboardReports'
+import { Skeleton } from '@/components/ui/skeleton'
+import { AlertCircle } from 'lucide-react'
 
 interface OverallProgressChartProps {
   title?: string
   className?: string
 }
 
+const MONTH_LABELS: Record<string, string> = {
+  '01': 'Jan',
+  '02': 'Fev',
+  '03': 'Mar',
+  '04': 'Abr',
+  '05': 'Mai',
+  '06': 'Jun',
+  '07': 'Jul',
+  '08': 'Ago',
+  '09': 'Set',
+  '10': 'Out',
+  '11': 'Nov',
+  '12': 'Dez',
+}
+
 export function OverallProgressChart({
   title = 'Progresso Médio por Categoria',
   className,
 }: OverallProgressChartProps) {
+  const { data, isLoading, error } = useProgressByCategory(6)
+
+  if (isLoading) {
+    return (
+      <div className={`h-full w-full ${className || ''}`}>
+        <Skeleton className="h-full w-full" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className={`h-full w-full flex items-center justify-center ${className || ''}`}>
+        <div className="text-center p-6">
+          <AlertCircle className="w-12 h-12 text-destructive mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            Erro ao carregar dados
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Transform API data to chart format
+  // Group by month and create data points
+  const monthsMap = new Map<string, Record<string, number>>()
+  const categoriesSet = new Set<string>()
+  const categoryColors = new Map<string, string>()
+
+  data?.forEach(item => {
+    const monthKey = item.month
+    const [, month] = monthKey.split('-')
+    const monthLabel = MONTH_LABELS[month] || month
+
+    if (!monthsMap.has(monthLabel)) {
+      monthsMap.set(monthLabel, { name: monthLabel })
+    }
+
+    const monthData = monthsMap.get(monthLabel)!
+    monthData[item.categoryName] = item.averageProgress
+
+    categoriesSet.add(item.categoryName)
+
+    // Store color for this category (use first occurrence)
+    if (!categoryColors.has(item.categoryName)) {
+      // Generate a color based on category name if not provided
+      // You could also fetch this from the items-by-category endpoint
+      const colors = ['#3B82F6', '#FF5733', '#10B981', '#F59E0B', '#8B5CF6', '#EC4899']
+      const index = Array.from(categoriesSet).indexOf(item.categoryName)
+      categoryColors.set(item.categoryName, colors[index % colors.length])
+    }
+  })
+
+  const chartData: LineChartDataPoint[] = Array.from(monthsMap.values())
+
+  const lines: LineConfig[] = Array.from(categoriesSet).map(categoryName => ({
+    dataKey: categoryName,
+    name: categoryName,
+    color: categoryColors.get(categoryName) || '#94A3B8',
+  }))
+
+  // Empty state
+  if (chartData.length === 0) {
+    return (
+      <div className={`h-full w-full flex items-center justify-center ${className || ''}`}>
+        <div className="text-center p-6">
+          <AlertCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">
+            Sem dados de progresso disponíveis
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={`h-full w-full ${className || ''}`}>
       <LineChart
-        data={MOCK_DATA}
-        lines={LINES}
+        data={chartData}
+        lines={lines}
         title={title}
-        yAxisLabel="Progresso (%)"
+        yAxisLabel="Progresso Médio (%)"
         showLegend={true}
       />
     </div>

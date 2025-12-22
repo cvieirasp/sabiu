@@ -51,7 +51,7 @@ export const updateLearningItemSchema = z.object({
       val === undefined ? undefined : val ? new Date(val) : null
     ),
   status: z.enum(Status).optional(),
-  categoryId: z.cuid(),
+  categoryId: z.cuid2().optional(),
 })
 
 export type UpdateLearningItemInput = z.infer<typeof updateLearningItemSchema>
@@ -137,7 +137,7 @@ export type ListLearningItemsQuery = z.infer<
 /**
  * Zod schema for CUID validation
  */
-export const cuidSchema = z.cuid('ID inválido')
+export const cuidSchema = z.cuid2('ID inválido')
 
 /**
  * Helper to validate status string and convert to StatusVO

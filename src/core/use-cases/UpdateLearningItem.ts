@@ -14,7 +14,7 @@ export interface UpdateLearningItemInput {
   descriptionMD?: string
   dueDate?: Date | null
   status?: StatusVO
-  categoryId: string
+  categoryId?: string
 }
 
 /**

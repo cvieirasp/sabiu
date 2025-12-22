@@ -33,7 +33,7 @@ const COLUMNS: Array<{ status: Status; title: string; color: string }> = [
 ]
 
 export function KanbanBoard() {
-  const { data: items, isLoading, error } = useLearningItems({ limit: 1000 })
+  const { data: items, isLoading, error } = useLearningItems({ limit: 100 })
   const updateStatus = useUpdateLearningItemStatus()
   const [activeItem, setActiveItem] = useState<LearningItemDTO | null>(null)
 
